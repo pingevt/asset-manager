@@ -1,0 +1,11 @@
+<?php
+
+function at_hours_worked_condition_asset_tool_condition() {
+  return array(
+    'hours_worked' => array(
+      'name' => 'Hours Worked',
+      'class' => 'hoursWorked',
+      'dependencies' => array(),
+    ),
+  );
+}

@@ -1,0 +1,7 @@
+name = Asset Tool Manager
+description = Asset Tool Manager
+version = 7.x-0.1
+core = 7.x
+package = CEMP
+
+files[] = includes/asset.inc
