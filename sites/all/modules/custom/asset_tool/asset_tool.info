@@ -5,3 +5,5 @@ core = 7.x
 package = CEMP
 
 files[] = includes/asset.inc
+
+dependencies[] = asset

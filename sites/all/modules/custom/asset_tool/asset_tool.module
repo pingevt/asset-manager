@@ -1,58 +1,6 @@
 <?php
 
 /**
- * Implements hook_entity_info().
- */
-function asset_tool_entity_info() {
-  $items['asset'] = array(
-    'label' => t('Asset'),
-    'controller class' => 'AssetController',
-    'entity class' => 'Asset',
-    'load hook' => 'asset_load',
-    'base table' => 'asset',
-    'uri callback' => 'asset_uri',
-    'fieldable' => TRUE,
-    'revisionable' => FALSE,
-    'access callback' => 'asset_entity_access',
-    //'access arguments' => array(''),
-    'entity keys' => array(
-      'id' => 'aid',
-      'label' => 'name',
-      'bundle' => 'type',
-    ),
-    'bundle keys' => array(
-      'bundle' => 'type',
-    ),
-    'bundles' => array(
-      'asset' => array(
-        'label' => t('Asset'),
-        'admin' => array(
-          'path' => 'admin/asset-tool/asset/asset-type/manage/%asset_type',
-          'bundle argument' => 5,
-          'real path' => 'admin/asset-tool/asset/asset-type/manage/asset',
-          'access callback' => 'user_access',
-        ),
-      ),
-    ),
-    'view modes' => array(
-      'full' => array(
-        'label' => t('Full content'),
-        'custom settings' => FALSE,
-      ),
-      'teaser' => array(
-        'label' => t('Teaser'),
-        'custom settings' => TRUE,
-      ),
-    ),
-    'module' => 'asset_tool',
-    'views controller class' => 'EntityDefaultViewsController',
-  );
-
-  return $items;
-}
-
-
-/**
  *
  */
 function asset_tool_conditions_load() {
@@ -66,3 +14,4 @@ dpm($module);
   }
 dpm($conditions);
 }
+

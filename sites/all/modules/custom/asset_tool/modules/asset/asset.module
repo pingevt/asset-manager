@@ -1,0 +1,235 @@
+<?php
+
+/**
+ * Implements hook_entity_info().
+ */
+function asset_entity_info() {
+  $items['asset'] = array(
+    'label' => t('Asset'),
+    'controller class' => 'AssetController',
+    'entity class' => 'Asset',
+    'load hook' => 'asset_load',
+    'base table' => 'asset',
+    'uri callback' => 'asset_uri',
+    'fieldable' => TRUE,
+    'revisionable' => FALSE,
+    'access callback' => 'asset_access_callback',
+    //'access arguments' => array(''),
+    'entity keys' => array(
+      'id' => 'aid',
+      'label' => 'name',
+      'bundle' => 'type',
+    ),
+    'bundle keys' => array(
+      'bundle' => 'type',
+    ),
+    'bundles' => array(
+      'asset' => array(
+        'label' => t('Asset'),
+        'admin' => array(
+          'path' => 'admin/structure/asset/manage',
+          //'real path' => 'admin/asset-tool/asset/asset-type/manage/asset',
+          'access arguments' => array('administer asset'),
+        ),
+      ),
+    ),
+    'view modes' => array(
+      'full' => array(
+        'label' => t('Full content'),
+        'custom settings' => FALSE,
+      ),
+      'teaser' => array(
+        'label' => t('Teaser'),
+        'custom settings' => TRUE,
+      ),
+    ),
+    'module' => 'asset_tool',
+    'views controller class' => 'EntityDefaultViewsController',
+    'admin ui' => array(
+      'path' => 'admin/content/assets',
+      'file' => 'includes/asset.admin.inc',
+      'controller class' => 'AssetUIController',
+    ),
+  );
+
+  return $items;
+}
+
+/**
+ * Implements hook_menu().
+ */
+function asset_menu() {
+  $items = array();
+
+  $items['asset/%assets'] = array(
+    'title' => 'Asset',
+    'page callback' => 'asset_view_entity',
+    'page arguments' => array(1),
+    'access callback' => 'asset_access_menu_callback',
+    'access arguments' => array('view', 1),
+  );
+
+  $items['admin/content/asset/bulk/delete/%'] = array(
+    'title' => 'Bulk Delete Asset',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('asset_bulk_delete', 5),
+    'access arguments' => array('administer lawmakers entities'),
+    'file' => 'includes/asset.admin.inc',
+  );
+
+  $items['admin/structure/asset'] = array(
+    'title' => 'Asset Fields',
+    'access arguments' => array('administer asset entities'),
+    'type' => MENU_NORMAL_ITEM,
+  );
+
+  return $items;
+}
+
+/**
+ * Implements hook_permission().
+ */
+function asset_permission() {
+  return array(
+    'administer asset entities' => array(
+      'title' => t('Administer Asset Entities'),
+      'description' => t('Allows a user to administer asset entities'),
+    ),
+    'view asset entities' => array(
+      'title' => t('View Asset Entity'),
+      'description' => t('Allows a user to view the asset entities.'),
+    ),
+    'create asset entities' => array(
+      'title' => t('Create Asset Entities'),
+      'description' => t('Allows a user to create asset entities.'),
+    ),
+    'edit asset entities' => array(
+      'title' => t('Edit Asset Entities'),
+      'description' => t('Allows a user to edit asset entities.'),
+    ),
+    'delete asset entities' => array(
+      'title' => t('Delete Asset Entities'),
+      'description' => t('Allows a user to delete asset entities.'),
+    ),
+    'use asset bulk operations' => array(
+      'title' => t('Do bulk operations on Asset entities'),
+      'description' => t('Allows a user to do bulk operations.'),
+    ),
+  );
+}
+
+/**
+ * Check access permission for Asset Entity UI.
+ */
+function asset_access_menu_callback($op, $lawmakers = NULL, $account = NULL) {
+  switch ($op) {
+    case 'view':
+      return user_access('view asset entities', $account);
+
+    case 'create':
+      return user_access('create asset entities', $account);
+
+    case 'update':
+      return user_access('edit asset entities', $account);
+
+    case 'delete':
+      return user_access('delete asset entities', $account);
+  }
+
+  return FALSE;
+}
+
+/**
+ * Asset access callback.
+ */
+function asset_access_callback() {
+  if (user_is_anonymous() && !user_access('administer asset entities')) {
+    return FALSE;
+  }
+  else {
+    return TRUE;
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function asset_theme() {
+  return array(
+    'asset_full' => array(
+      'variables' => array('asset' => NULL),
+      'file' => 'includes/asset.theme.inc',
+    ),
+  );
+}
+
+/**
+ * Helper function for custom queries.
+ */
+function asset_entity_query($conditions = array()) {
+
+  $query = new EntityFieldQuery();
+  $query->entityCondition('entity_type', 'asset');
+
+  // Apply conditions.
+  foreach ($conditions as $key => $value) {
+    $query->propertyCondition($key, $value);
+  }
+
+  $result = $query->execute();
+
+  if (isset($result['asset'])) {
+    $assets = array_keys($result['asset']);
+  }
+  else {
+    $assets = array();
+  }
+
+  return $assets;
+}
+
+/**
+ * Saves Lawmaker to database.
+ */
+function asset_save(asset $asset) {
+  return $asset->save();
+}
+
+/**
+ * View for /lawmakers/<asset_id> page.
+ */
+function asset_view_entity($asset) {
+  drupal_set_title($asset->title);
+  // Path not entity.
+  $asset_output = theme('asset_full', array('asset' => $asset));
+  return $asset_output;
+}
+
+/**
+ * Menu autoloader for /lawmakers.
+ */
+function asset_load($asset_id, $reset = FALSE) {
+  $assets = asset_load_multiple(array($asset_id), array(), $reset);
+  return reset($assets);
+}
+
+/**
+ * Load multiple lawmakers based on certain conditions.
+ */
+function asset_load_multiple($asset_ids = array(), $conditions = array(), $reset = FALSE) {
+  return entity_load('asset', $asset_ids, $conditions, $reset);
+}
+
+/**
+ * Deletes a lawmaker.
+ */
+function asset_delete(asset $asset) {
+  $asset->delete();
+}
+
+/**
+ * Delete multiple lawmakers.
+ */
+function asset_delete_multiple(array $asset_ids) {
+  entity_get_controller('asset')->delete($asset_ids);
+}
