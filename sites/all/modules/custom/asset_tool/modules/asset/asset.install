@@ -41,7 +41,7 @@ function asset_schema() {
         'not null' => TRUE,
         'default' => 0,
       ),
-      'updated' => array(
+      'changed' => array(
         'description' => 'The Unix timestamp when the asset was most recently saved.',
         'type' => 'int',
         'not null' => TRUE,
@@ -49,7 +49,7 @@ function asset_schema() {
       ),
     ),
     'indexes' => array(
-      'character_changed' => array('updated'),
+      'character_changed' => array('changed'),
       'character_created' => array('created'),
     ),
     'unique keys' => array(

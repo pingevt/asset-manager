@@ -18,7 +18,7 @@ function asset_entity_info() {
     'entity keys' => array(
       'id' => 'aid',
       'label' => 'name',
-      'bundle' => 'type',
+      //'bundle' => 'type',
     ),
     'bundle keys' => array(
       'bundle' => 'type',
@@ -43,7 +43,7 @@ function asset_entity_info() {
         'custom settings' => TRUE,
       ),
     ),
-    'module' => 'asset_tool',
+    'module' => 'asset',
     'views controller class' => 'EntityDefaultViewsController',
     'admin ui' => array(
       'path' => 'admin/content/assets',
@@ -61,7 +61,7 @@ function asset_entity_info() {
 function asset_menu() {
   $items = array();
 
-  $items['asset/%assets'] = array(
+  $items['asset/%asset'] = array(
     'title' => 'Asset',
     'page callback' => 'asset_view_entity',
     'page arguments' => array(1),
@@ -199,7 +199,7 @@ function asset_save(asset $asset) {
  * View for /lawmakers/<asset_id> page.
  */
 function asset_view_entity($asset) {
-  drupal_set_title($asset->title);
+  drupal_set_title($asset->name);
   // Path not entity.
   $asset_output = theme('asset_full', array('asset' => $asset));
   return $asset_output;
