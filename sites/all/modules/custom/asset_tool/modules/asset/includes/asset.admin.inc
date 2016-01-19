@@ -9,44 +9,106 @@
  */
 function asset_form($form, &$form_state, $asset = NULL) {
   $form = array();
-dpm($asset);
-  $form['name'] = array(
-    '#title' => t('Name'),
-    '#type' => 'textfield',
-    '#default_value' => isset($asset->name) ? $asset->name : '',
-    '#required' => TRUE,
-    '#maxlength' => 255,
-  );
 
-  $types = array('' => 'Select') + asset_types_get();
-  $form['type'] = array(
-    '#title' => t('Type'),
-    '#type' => 'select',
-    '#options' => $types,
-    '#default_value' => isset($asset->type) ? $asset->type : '',
-    '#required' => TRUE,
-    '#maxlength' => 255,
-  );
+  $settings = variable_get('app_system_period', '');
 
-  $form['description_field'] = array(
-    '#type' => 'text_format',
-    '#title' => t('Description'),
-    '#default_value' => isset($asset->description) ? $asset->description : '',
-    '#format' => isset($asset->description_format) ? $asset->description_format : 'plain_text',
-  );
+  if ($settings != '') {
+    $form['name'] = array(
+      '#title' => t('Name'),
+      '#type' => 'textfield',
+      '#default_value' => isset($asset->name) ? $asset->name : '',
+      '#required' => TRUE,
+      '#maxlength' => 255,
+    );
 
-  field_attach_form('asset', $asset, $form, $form_state);
+    $types = array('' => 'Select') + asset_types_get();
+    $form['type'] = array(
+      '#title' => t('Type'),
+      '#type' => 'select',
+      '#options' => $types,
+      '#default_value' => isset($asset->type) ? $asset->type : '',
+      '#required' => TRUE,
+      '#maxlength' => 255,
+    );
 
-  $form['actions'] = array(
-    '#type' => 'actions',
-    'submit' => array(
-      '#type' => 'submit',
-      '#value' => isset($asset->aid) ? t('Update Asset') : t('Save Asset'),
-    ),
-    'delete_link' => array(
-      '#markup' => isset($asset->aid) ? l(t('Delete'),'admin/content/asset/manage/' . $asset->aid . '/delete', array('attributes' => array('id' => array('asset-delete-' . $asset->aid), 'class' => array('button remove')), 'query' => array('destination' => 'admin/content/assets'))) : '',
-    )
-  );
+    $form['description_field'] = array(
+      '#type' => 'text_format',
+      '#title' => t('Description'),
+      '#default_value' => isset($asset->description) ? $asset->description : '',
+      '#format' => isset($asset->description_format) ? $asset->description_format : 'plain_text',
+    );
+
+    $years = array('' => '--Select--');
+    for ($i = (date('Y') -10); $i <= (date('Y') +2); $i++) {
+      $years[$i] = $i;
+    }
+    $form['start_period_year'] = array(
+      '#type' => 'select',
+      '#title' => t('Starting Year'),
+      '#options' => $years,
+      '#default_value' => isset($asset->start_period_year) ? $asset->start_period_year : '',
+      '#required' => TRUE,
+    );
+
+    $periods = array('' => '--Select--');
+    switch ($settings) {
+    case 'monthly':
+      for ($i=1;$i<=12;$i++) {
+        $periods[$i] = date('M', mktime(0, 0, 0, $i));
+      }
+      break;
+    case 'quarterly':
+      $periods += array(
+        '1' => 'First Q',
+        '2' => 'Second Q',
+        '3' => 'Third Q',
+        '4' => 'First Qourth',
+      );
+      break;
+    case 'biannually':
+      $periods += array(
+        '1' => 'First Half',
+        '2' => 'Second Half',
+      );
+      break;
+    case 'annually':
+      break;
+    }
+
+    if ($settings != 'annually') {
+      $form['start_period'] = array(
+        '#type' => 'select',
+        '#title' => t('Starting Period'),
+        '#options' => $periods,
+        '#default_value' => isset($asset->start_period_year) ? $asset->start_period_year : '',
+        '#required' => TRUE,
+      );
+    }
+    else {
+      $form['start_period'] = array(
+        '#type' => 'hidden',
+        '#value' => '0',
+      );
+    }
+
+    field_attach_form('asset', $asset, $form, $form_state);
+
+    $form['actions'] = array(
+      '#type' => 'actions',
+      'submit' => array(
+        '#type' => 'submit',
+        '#value' => isset($asset->aid) ? t('Update Asset') : t('Save Asset'),
+      ),
+      'delete_link' => array(
+        '#markup' => isset($asset->aid) ? l(t('Delete'),'admin/content/asset/manage/' . $asset->aid . '/delete', array('attributes' => array('id' => array('asset-delete-' . $asset->aid), 'class' => array('button remove')), 'query' => array('destination' => 'admin/content/assets'))) : '',
+      )
+    );
+  }
+  else {
+    $form['text'] = array(
+      '#markup' => t('App settings need to be set before creating Assets'),
+    );
+  }
 
   return $form;
 }

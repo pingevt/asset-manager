@@ -41,6 +41,16 @@ function asset_schema() {
         'length' => 255,
         'not null' => TRUE,
       ),
+      'start_period_year' => array(
+        'description' => 'Starting period year.',
+        'type' => 'int',
+        'size' => 'medium',
+      ),
+      'start_period' => array(
+        'description' => 'Starting period.',
+        'type' => 'int',
+        'size' => 'small',
+      ),
       'uid' => array(
         'description' => 'The {users}.uid that owns this asset; initially, this is the user that created it.',
         'type' => 'int',

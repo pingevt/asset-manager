@@ -1,1 +1,8 @@
 <?php
+
+/**
+ * Implements hook_uninstall().
+ */
+function asset_tool_uninstall() {
+  variable_del('app_system_period');
+}

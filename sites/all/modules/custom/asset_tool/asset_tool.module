@@ -1,6 +1,68 @@
 <?php
 
 /**
+ * Implements hook_menu().
+ */
+function asset_tool_menu() {
+  $items['asset-tool/settings'] = array(
+    'title' => 'Settings',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('asset_tool_settings_form'),
+    'access arguments' => array('access content'),
+    'type' => MENU_SUGGESTED_ITEM,
+  );
+
+  return $items;
+}
+
+function asset_tool_settings_form($form, &$form_state) {
+  $form = array();
+
+  // Check if assets exist... cannot change if assets exist.
+  $q = new EntityFieldQuery();
+  $q->entityCondition('entity_type', 'asset');
+  $result = $q->execute();
+
+  $form['app_system_period'] = array(
+    '#type' => 'select',
+    '#title' => t('App Period'),
+    '#options' => array(
+      '' => '--Select--',
+      'monthly' => 'Monthly',
+      'quarterly' => 'Quarterly',
+      'biannually' => 'Biannually',
+      'annually' => 'Annually',
+    ),
+    '#default_value' => variable_get('app_system_period', ''),
+    '#disabled' => (count($result) > 0),
+  );
+
+/*
+  $form['actions'] = array(
+    '#type' => 'actions',
+    'submit' => array(
+      '#type' => 'submit',
+      '#value' => t('Save Configuration'),
+    ),
+  );
+
+  $form['#theme'] = 'system_settings_form';
+*/
+  return system_settings_form($form);
+}
+
+/*
+function asset_tool_settings_form_validate($form, &$form_state) {
+
+}
+
+function asset_tool_settings_form_submit($form, &$form_state) {
+
+}
+*/
+
+
+/**
  *
  */
 function asset_tool_conditions_load() {
