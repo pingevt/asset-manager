@@ -16,6 +16,12 @@ function asset_schema() {
         'unsigned' => TRUE,
         'not null' => TRUE,
       ),
+      'name' => array(
+        'description' => 'asset name.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => FALSE,
+      ),
       'type' => array(
         'description' => 'The bundle of this asset.',
         'type' => 'varchar',
@@ -23,11 +29,17 @@ function asset_schema() {
         'not null' => TRUE,
         'default' => ''
       ),
-      'name' => array(
-        'description' => 'asset name.',
+      'description' => array(
+        'description' => 'Description of the asset.',
+        'type' => 'text',
+        'size' => 'big',
+        'not null' => TRUE,
+      ),
+      'description_format' => array(
+        'description' => 'Description format.',
         'type' => 'varchar',
         'length' => 255,
-        'not null' => FALSE,
+        'not null' => TRUE,
       ),
       'uid' => array(
         'description' => 'The {users}.uid that owns this asset; initially, this is the user that created it.',

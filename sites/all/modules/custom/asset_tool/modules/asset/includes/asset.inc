@@ -29,12 +29,19 @@ class AssetController extends EntityAPIController {
    * Override the save method.
    */
   public function save($entity, DatabaseTransaction $transaction = NULL) {
+dpm($entity);
     if (isset($entity->is_new)) {
       $entity->created = REQUEST_TIME;
 
       global $user;
       $entity->uid = $user->uid;
     }
+
+    if (isset($entity->description_field)) {
+      $entity->description = $entity->description_field['value'];
+      $entity->description_format = $entity->description_field['format'];
+    }
+dpm($entity);
     $entity->changed = REQUEST_TIME;
     return parent::save($entity, $transaction);
   }

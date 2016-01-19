@@ -9,13 +9,30 @@
  */
 function asset_form($form, &$form_state, $asset = NULL) {
   $form = array();
-
+dpm($asset);
   $form['name'] = array(
     '#title' => t('Name'),
     '#type' => 'textfield',
     '#default_value' => isset($asset->name) ? $asset->name : '',
     '#required' => TRUE,
     '#maxlength' => 255,
+  );
+
+  $types = array('' => 'Select') + asset_types_get();
+  $form['type'] = array(
+    '#title' => t('Type'),
+    '#type' => 'select',
+    '#options' => $types,
+    '#default_value' => isset($asset->type) ? $asset->type : '',
+    '#required' => TRUE,
+    '#maxlength' => 255,
+  );
+
+  $form['description_field'] = array(
+    '#type' => 'text_format',
+    '#title' => t('Description'),
+    '#default_value' => isset($asset->description) ? $asset->description : '',
+    '#format' => isset($asset->description_format) ? $asset->description_format : 'plain_text',
   );
 
   field_attach_form('asset', $asset, $form, $form_state);
