@@ -1,9 +1,9 @@
 <?php
 
-interface asstToolConditionBaserInterface {
+interface assetToolConditionBaseInterface {
 
 }
 
-class asstToolConditionBaser implements asstToolConditionBaserInterface {
+class assetToolConditionBase implements assetToolConditionBaseInterface {
 
 }

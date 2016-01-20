@@ -16,14 +16,24 @@ class AssetController extends EntityAPIController {
   /**
    * override create().
    */
-  /*
   public function create(array $values = array()) {
-
-    $values['type'] = 'asset';
-
+    $values['reports'] = array();
     return parent::create($values);
   }
-  */
+
+  /**
+   * override load().
+   */
+  public function load($ids = array(), $conditions = array()) {
+    $entities = parent::load($ids, $conditions);
+
+    // Load reports
+    foreach ($entities as &$entity) {
+      $entity->reports = array();
+    }
+
+    return $entities;
+  }
 
   /**
    * Override the save method.
@@ -43,7 +53,31 @@ dpm($entity);
     }
 dpm($entity);
     $entity->changed = REQUEST_TIME;
-    return parent::save($entity, $transaction);
+
+    $return = parent::save($entity, $transaction);
+
+    // Save/Update reports
+dpm($entity);
+    foreach ($entity->reports as $n => $report) {
+      // Save report record.
+      $report = array('aid' => $entity->aid, 'n' => $n);
+dpm($report);
+      if ($t = drupal_write_record('asset_report', $report)) {
+        drupal_set_message($t . ' report', 'notice');
+      }
+      else {
+        drupal_set_message('Did not save report', 'error');
+      }
+dpm($t);
+
+      // Save individual conditions.
+      $conditions = asset_tool_conditions_load();
+      foreach ($conditions as $con_id => $cond) {
+        $form['reports'][$n][$con_id] = $cond['controller']::saveReports($entity, $n);
+      }
+    }
+
+    return $return;
   }
 }
 

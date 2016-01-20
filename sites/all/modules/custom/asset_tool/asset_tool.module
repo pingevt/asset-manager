@@ -66,14 +66,20 @@ function asset_tool_settings_form_submit($form, &$form_state) {
  *
  */
 function asset_tool_conditions_load() {
-dpm('haha');
-dpm(module_implements('asset_tool_condition'));
+
   $conditions = array();
   foreach (	module_implements('asset_tool_condition') as $module) {
-dpm($module);
     $func = $module . '_asset_tool_condition';
     $conditions += $func();
   }
-dpm($conditions);
+
+  foreach ($conditions as $cond_machine_name => $cond) {
+    $controller = new $cond['controller'];
+    if (!is_subclass_of($controller, 'assetToolConditionBase')) {
+      unset($conditions[$cond_machine_name]);
+    }
+  }
+
+  return $conditions;
 }
 

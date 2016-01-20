@@ -85,5 +85,34 @@ function asset_schema() {
     'primary key' => array('aid'),
   );
 
+  $schema['asset_report'] = array(
+    'description' => 'The base table for the asset entity reports',
+    'fields' => array(
+      'aid' => array(
+        'description' => 'Primary key of the asset entity',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'n' => array(
+        'description' => 'The order or the report.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+    ),
+    'indexes' => array(
+    ),
+    'unique keys' => array(
+      'aid_n' => array('aid', 'n'),
+    ),
+    'foreign keys' => array(
+      'asset' => array(
+        'table' => 'asset',
+        'columns' => array('aid' => 'aid'),
+      ),
+    ),
+  );
+
   return $schema;
 }

@@ -9,7 +9,7 @@
  */
 function asset_form($form, &$form_state, $asset = NULL) {
   $form = array();
-
+dpm($asset);
   $settings = variable_get('app_system_period', '');
 
   if ($settings != '') {
@@ -80,7 +80,7 @@ function asset_form($form, &$form_state, $asset = NULL) {
         '#type' => 'select',
         '#title' => t('Starting Period'),
         '#options' => $periods,
-        '#default_value' => isset($asset->start_period_year) ? $asset->start_period_year : '',
+        '#default_value' => isset($asset->start_period) ? $asset->start_period : '',
         '#required' => TRUE,
       );
     }
@@ -92,6 +92,27 @@ function asset_form($form, &$form_state, $asset = NULL) {
     }
 
     field_attach_form('asset', $asset, $form, $form_state);
+
+    $report_count = count($asset->reports) + 1;
+    $form['reports'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('title'),
+      '#tree' => TRUE,
+    );
+
+    $conditions = asset_tool_conditions_load();
+dpm($conditions);
+
+    for ($i=0; $i<$report_count; $i++) {
+      $form['reports'][$i] = array(
+        '#type' => 'fieldset',
+        '#title' => 'n = ' . ($i + 1),
+      );
+
+      foreach ($conditions as $con_id => $cond) {
+        $form['reports'][$i][$con_id] = $cond['controller']::assetFormItems($asset, $i);
+      }
+    }
 
     $form['actions'] = array(
       '#type' => 'actions',
