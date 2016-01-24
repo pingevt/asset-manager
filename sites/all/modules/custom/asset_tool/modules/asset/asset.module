@@ -161,7 +161,6 @@ function asset_theme() {
       'path' => $tpl_path,
       'variables' => array('asset' => NULL),
       'template' => 'asset',
-      //'preprocess functions' => array('asset_preproccess_asset_full'),
     ),
   );
 }
@@ -178,7 +177,7 @@ function template_process_asset_full(&$vars) {
   $header = array('N');
   $rows = array();
 
-  foreach ($asset->reports as $n => $report) {
+  foreach ($asset->data as $n => $data) {
     $rows[] = array('n' => $n);
   }
 
@@ -187,9 +186,7 @@ function template_process_asset_full(&$vars) {
   foreach ($conditions as $condition) {
     $condition['controller']::viewFullHeader($header);
 
-    foreach ($asset->reports as $report) {
-      $condition['controller']::viewFullRows($rows, $asset->reports);
-    }
+    $condition['controller']::viewFullRows($rows, $asset->data);
   }
 
   $vars['content']['data']['table'] = array(

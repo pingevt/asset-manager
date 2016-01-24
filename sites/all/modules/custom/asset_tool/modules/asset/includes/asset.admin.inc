@@ -91,9 +91,9 @@ function asset_form($form, &$form_state, $asset = NULL) {
     }
 
     field_attach_form('asset', $asset, $form, $form_state);
-
-    $report_count = count($asset->reports) + 1;
-    $form['reports'] = array(
+dpm($asset->data);
+    $data_count = count($asset->data) + 1;
+    $form['data'] = array(
       '#type' => 'fieldset',
       '#title' => t('title'),
       '#tree' => TRUE,
@@ -101,14 +101,21 @@ function asset_form($form, &$form_state, $asset = NULL) {
 
     $conditions = asset_tool_conditions_load();
 
-    for ($i=0; $i<$report_count; $i++) {
-      $form['reports'][$i] = array(
+    for ($i=0; $i<$data_count; $i++) {
+      $form['data'][$i] = array(
         '#type' => 'fieldset',
         '#title' => 'n = ' . ($i + 1),
       );
 
+      if (isset($asset->data[$i]['adid'])) {
+        $form['data'][$i]['adid'] = array(
+          '#type' => 'hidden',
+          '#value' => $asset->data[$i]['adid'],
+        );
+      }
+
       foreach ($conditions as $con_id => $cond) {
-        $form['reports'][$i][$con_id] = $cond['controller']::assetFormItems($asset, $i);
+        $form['data'][$i][$con_id] = $cond['controller']::assetFormItems($asset, $i);
       }
     }
 

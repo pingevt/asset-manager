@@ -92,7 +92,7 @@ function asset_tool_schema_alter(&$schema) {
 
   foreach ($conditions as $con_id => $cond) {
     $db_updates = $cond['controller']::hookSchema();
-    $schema['asset_report']['fields'] += $db_updates['fields'];
+    $schema['asset_data']['fields'] += $db_updates['fields'];
   }
 }
 
@@ -100,7 +100,7 @@ function asset_tool_schema_alter(&$schema) {
  * Implements hook_modules_enabled().
  */
 function asset_tool_modules_enabled($modules) {
-  $table = 'asset_report';
+  $table = 'asset_data';
 
   foreach ($modules as $module) {
     $func = $module . '_asset_tool_condition';
@@ -131,7 +131,7 @@ function asset_tool_modules_enabled($modules) {
  * Implements hook_modules_uninstalled().
  */
 function asset_tool_modules_uninstalled($modules) {
-  $table = 'asset_report';
+  $table = 'asset_data';
   foreach ($modules as $module) {
     $at_schema_settings = variable_get('at_schema_settings', array());
 

@@ -85,11 +85,11 @@ function asset_schema() {
     'primary key' => array('aid'),
   );
 
-  $schema['asset_report'] = array(
-    'description' => 'The base table for the asset entity reports',
+  $schema['asset_data'] = array(
+    'description' => 'The base table for the asset entity data',
     'fields' => array(
-      'arid' => array(
-        'description' => 'Primary key of the asset report',
+      'adid' => array(
+        'description' => 'Primary key of the asset data',
         'type' => 'serial',
         'unsigned' => TRUE,
         'not null' => TRUE,
@@ -101,7 +101,7 @@ function asset_schema() {
         'default' => 0,
       ),
       'n' => array(
-        'description' => 'The order or the report.',
+        'description' => 'The order or the data.',
         'type' => 'int',
         'not null' => TRUE,
         'default' => 0,
@@ -118,7 +118,7 @@ function asset_schema() {
         'columns' => array('aid' => 'aid'),
       ),
     ),
-    'primary key' => array('arid'),
+    'primary key' => array('adid'),
   );
 
   return $schema;

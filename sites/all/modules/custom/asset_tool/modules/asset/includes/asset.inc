@@ -14,7 +14,7 @@ class AssetController extends EntityAPIController {
    * override create().
    */
   public function create(array $values = array()) {
-    $values['reports'] = array();
+    $values['data'] = array();
     return parent::create($values);
   }
 
@@ -24,18 +24,18 @@ class AssetController extends EntityAPIController {
   public function load($ids = array(), $conditions = array()) {
     $entities = parent::load($ids, $conditions);
 
-    // Load reports
+    // Load data
     foreach ($entities as &$entity) {
-      $entity->reports = array();
+      $entity->data = array();
 
-      $q = db_select('asset_report', 'ar');
-      $q->fields('ar');
-      $q->condition('ar.aid', $entity->aid);
+      $q = db_select('asset_data', 'ad');
+      $q->fields('ad');
+      $q->condition('ad.aid', $entity->aid);
       $q->orderBy('n', 'ASC');
       $results = $q->execute();
 
       while ($row = $results->fetchAssoc()) {
-        $entity->reports[$row['n']] = $row;
+        $entity->data[$row['n']] = $row;
       }
     }
 
@@ -61,34 +61,46 @@ class AssetController extends EntityAPIController {
     $entity->changed = REQUEST_TIME;
 
     $return = parent::save($entity, $transaction);
+dpm($entity->data);
+    // Save/Update data
+    foreach ($entity->data as $n => $r) {
+dpm($r);
+      //if ()
+        // Save data record.
+        $data = array();
+        if (isset($r['adid'])) {
+          $data['adid'] = $r['adid'];
+        }
+        $data += array(
+          'aid' => $entity->aid,
+          'n' => $n
+        );
 
-    // Save/Update reports
-    foreach ($entity->reports as $n => $r) {
-      // Save report record.
-      $report = array();
-      if (isset($r->arid)) {
-        $report['arid'] = $r->arid;
-      }
-      $report += array(
-        'aid' => $entity->aid,
-        'n' => $n
-      );
-
-
-      foreach ($r as $mod => $vals) {
-        if ($mod != 'arid') {
-          foreach ($vals as $field => $val) {
-            $report[$mod . '_' . $field] = $val;
+        foreach ($r as $mod => $vals) {
+          if ($mod != 'adid') {
+            foreach ($vals as $field => $val) {
+              $data[$mod . '_' . $field] = $val;
+            }
           }
         }
-      }
-
-      if ($t = drupal_write_record('asset_report', $report)) {
-        drupal_set_message($t . ' report', 'notice');
-      }
-      else {
-        drupal_set_message('Did not save report', 'error');
-      }
+dpm($data);
+        if (isset($data['adid'])) {
+          if ($t = drupal_write_record('asset_data', $data, array('adid'))) {
+            drupal_set_message($t . ' data', 'notice');
+          }
+          else {
+            drupal_set_message('Did not save data', 'error');
+          }
+        }
+        else {
+          if ($t = drupal_write_record('asset_data', $data)) {
+            drupal_set_message($t . ' data', 'notice');
+          }
+          else {
+            drupal_set_message('Did not save data', 'error');
+          }
+        }
+      //}
     }
 
     return $return;

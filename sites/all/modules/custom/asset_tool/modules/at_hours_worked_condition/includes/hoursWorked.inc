@@ -7,7 +7,7 @@ class hoursWorked extends assetToolConditionBase {
     $form['value'] = array(
       '#type' => 'textfield',
       '#title' => 'Hours worked',
-      '#default_value' => isset($asset->reports[$n][self::$machine_name . '_value'])? $asset->reports[$n][self::$machine_name . '_value'] : '',
+      '#default_value' => isset($asset->data[$n][self::$machine_name . '_value'])? $asset->data[$n][self::$machine_name . '_value'] : '',
     );
 
     return $form;
@@ -19,7 +19,7 @@ class hoursWorked extends assetToolConditionBase {
         'hours_worked_value' => array(
           'description' => 'The value.',
           'type' => 'int',
-          'not null' => TRUE,
+          'not null' => FALSE,
           'default' => 0,
         ),
       ),
@@ -30,9 +30,9 @@ class hoursWorked extends assetToolConditionBase {
     $header[] = 'Hours Worked';
   }
 
-  public static function viewFullRows(&$rows, $reports) {
-    foreach ($reports as $n => $report) {
-      $rows[$n][] = $report['hours_worked_value'];
+  public static function viewFullRows(&$rows, $data) {
+    foreach ($data as $n => $d) {
+      $rows[$n][] = $d['hours_worked_value'];
     }
   }
 }
