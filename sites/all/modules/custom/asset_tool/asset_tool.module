@@ -83,3 +83,67 @@ function asset_tool_conditions_load() {
   return $conditions;
 }
 
+/**
+ * Implements hook_schema_alter().
+ */
+function asset_tool_schema_alter(&$schema) {
+
+  $conditions = asset_tool_conditions_load();
+
+  foreach ($conditions as $con_id => $cond) {
+    $db_updates = $cond['controller']::hookSchema();
+    $schema['asset_report']['fields'] += $db_updates['fields'];
+  }
+}
+
+/**
+ * Implements hook_modules_enabled().
+ */
+function asset_tool_modules_enabled($modules) {
+  $table = 'asset_report';
+
+  foreach ($modules as $module) {
+    $func = $module . '_asset_tool_condition';
+    if (function_exists($func)) {
+      $conditions = $func();
+
+      // Save variable.
+      $at_schema_settings = variable_get('at_schema_settings', array());
+
+      foreach ($conditions as $cond_id => $condition) {
+        $new_schema = $condition['controller']::hookSchema();
+
+        $at_schema_settings[$module][$cond_id] = $new_schema;
+        // Update fields
+        foreach ($new_schema['fields'] as $field_id => $field_description) {
+          if (!db_field_exists($table, $field_id)) {
+            $r = db_add_field($table, $field_id, $field_description);
+          }
+        }
+      }
+
+      variable_set('at_schema_settings', $at_schema_settings);
+    }
+  }
+}
+
+/**
+ * Implements hook_modules_uninstalled().
+ */
+function asset_tool_modules_uninstalled($modules) {
+  $table = 'asset_report';
+  foreach ($modules as $module) {
+    $at_schema_settings = variable_get('at_schema_settings', array());
+
+    foreach($at_schema_settings[$module] as $cond_id => $new_schema) {
+      foreach ($new_schema['fields'] as $field_id => $field_description) {
+        if (db_field_exists($table, $field_id)) {
+          $r = db_drop_field($table, $field_id);
+        }
+      }
+    }
+
+    unset($at_schema_settings[$module]);
+    variable_set('at_schema_settings', $at_schema_settings);
+  }
+}

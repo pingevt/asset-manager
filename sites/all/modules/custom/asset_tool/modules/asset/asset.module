@@ -73,7 +73,7 @@ function asset_menu() {
     'title' => 'Bulk Delete Asset',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('asset_bulk_delete', 5),
-    'access arguments' => array('administer lawmakers entities'),
+    'access arguments' => array('administer asset entities'),
     'file' => 'includes/asset.admin.inc',
   );
 
@@ -121,7 +121,7 @@ function asset_permission() {
 /**
  * Check access permission for Asset Entity UI.
  */
-function asset_access_menu_callback($op, $lawmakers = NULL, $account = NULL) {
+function asset_access_menu_callback($op, $asset = NULL, $account = NULL) {
   switch ($op) {
     case 'view':
       return user_access('view asset entities', $account);
@@ -155,13 +155,50 @@ function asset_access_callback() {
  * Implements hook_theme().
  */
 function asset_theme() {
+  $tpl_path = drupal_get_path('module', 'asset') . '/templates';
   return array(
     'asset_full' => array(
+      'path' => $tpl_path,
       'variables' => array('asset' => NULL),
-      'file' => 'includes/asset.theme.inc',
+      'template' => 'asset',
+      //'preprocess functions' => array('asset_preproccess_asset_full'),
     ),
   );
 }
+
+function template_preprocess_asset_full(&$vars) {
+  $vars['page'] = TRUE;
+}
+
+function template_process_asset_full(&$vars) {
+  $asset = $vars['asset'];
+  $vars['content']['data']['header'] = array(
+    '#markup' => '<h3>Data</h3>',
+  );
+  $header = array('N');
+  $rows = array();
+
+  foreach ($asset->reports as $n => $report) {
+    $rows[] = array('n' => $n);
+  }
+
+  $conditions = asset_tool_conditions_load();
+
+  foreach ($conditions as $condition) {
+    $condition['controller']::viewFullHeader($header);
+
+    foreach ($asset->reports as $report) {
+      $condition['controller']::viewFullRows($rows, $asset->reports);
+    }
+  }
+
+  $vars['content']['data']['table'] = array(
+    '#theme' => 'table',
+    '#header' => $header,
+    '#rows' => $rows,
+  );
+}
+
 
 /**
  * Helper function for custom queries.
@@ -189,14 +226,14 @@ function asset_entity_query($conditions = array()) {
 }
 
 /**
- * Saves Lawmaker to database.
+ * Saves Asset to database.
  */
 function asset_save(asset $asset) {
   return $asset->save();
 }
 
 /**
- * View for /lawmakers/<asset_id> page.
+ * View for /asset/<asset_id> page.
  */
 function asset_view_entity($asset) {
   drupal_set_title($asset->name);
@@ -206,7 +243,7 @@ function asset_view_entity($asset) {
 }
 
 /**
- * Menu autoloader for /lawmakers.
+ * Menu autoloader for /asset.
  */
 function asset_load($asset_id, $reset = FALSE) {
   $assets = asset_load_multiple(array($asset_id), array(), $reset);
@@ -214,24 +251,28 @@ function asset_load($asset_id, $reset = FALSE) {
 }
 
 /**
- * Load multiple lawmakers based on certain conditions.
+ * Load multiple assets based on certain conditions.
  */
 function asset_load_multiple($asset_ids = array(), $conditions = array(), $reset = FALSE) {
   return entity_load('asset', $asset_ids, $conditions, $reset);
 }
 
 /**
- * Deletes a lawmaker.
+ * Deletes an Asset.
  */
 function asset_delete(asset $asset) {
   $asset->delete();
 }
 
 /**
- * Delete multiple lawmakers.
+ * Delete multiple Assets.
  */
 function asset_delete_multiple(array $asset_ids) {
   entity_get_controller('asset')->delete($asset_ids);
+}
+
+function asset_uri($asset) {
+  return array('path' => 'asset/' . $asset->identifier());
 }
 
 /**

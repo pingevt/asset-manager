@@ -3,6 +3,7 @@
 /**
  * Implements hook_schema().
  */
+ /*
 function at_hours_worked_condition_schema() {
 
   $schema['atc_hours_worked'] = array(
@@ -42,3 +43,4 @@ function at_hours_worked_condition_schema() {
 
   return $schema;
 }
+*/

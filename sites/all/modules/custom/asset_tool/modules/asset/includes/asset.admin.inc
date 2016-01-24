@@ -9,7 +9,6 @@
  */
 function asset_form($form, &$form_state, $asset = NULL) {
   $form = array();
-dpm($asset);
   $settings = variable_get('app_system_period', '');
 
   if ($settings != '') {
@@ -101,7 +100,6 @@ dpm($asset);
     );
 
     $conditions = asset_tool_conditions_load();
-dpm($conditions);
 
     for ($i=0; $i<$report_count; $i++) {
       $form['reports'][$i] = array(
