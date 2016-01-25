@@ -5,7 +5,10 @@ function at_hours_downed_condition_asset_tool_condition() {
     'hours_downed' => array(
       'name' => 'Hours Down',
       'controller' => 'hoursDowned',
-      'dependencies' => array(),
+      'dependencies' => array(
+        'hours_worked',
+      ),
+      'weight' => 1,
     ),
   );
 }

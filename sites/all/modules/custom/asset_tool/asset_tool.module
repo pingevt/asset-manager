@@ -78,9 +78,36 @@ function asset_tool_conditions_load() {
     if (!is_subclass_of($controller, 'assetToolConditionBase')) {
       unset($conditions[$cond_machine_name]);
     }
+
+    // Check weight.
+    if (!isset($conditions[$cond_machine_name]['weight'])) {
+      $conditions[$cond_machine_name]['weight'] = 0;
+    }
   }
 
+  // Check dependencies.
+  foreach ($conditions as $cond_machine_name => $cond) {
+    if (isset($cond['dependencies']) && !empty($cond['dependencies'])) {
+      foreach ($cond['dependencies'] as $dependency) {
+        if (!isset($conditions[$dependency])) {
+          unset($conditions[$cond_machine_name]);
+          break;
+        }
+      }
+    }
+  }
+
+  // Reorder by weight.
+  usort($conditions, "_reorder_conditions");
+
   return $conditions;
+}
+
+function _reorder_conditions($a, $b) {
+  if ($a['weight'] == $b['weight']) {
+      return 0;
+  }
+  return ($a['weight'] < $b['weight']) ? -1 : 1;
 }
 
 /**
