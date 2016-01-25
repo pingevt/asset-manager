@@ -3,6 +3,23 @@
 class hoursDowned extends assetToolConditionBase {
   static $machine_name = 'hours_downed';
 
+  public static function settingsForm() {
+    $form = array(
+      '#type' => 'fieldset',
+      '#title' => t('Hours Down Settings'),
+    );
+
+    return $form;
+  }
+
+  public static function settingsFormValidate($form, &$form_state) {
+
+  }
+
+  public static function settingsFormSubmit($form, &$form_state) {
+
+  }
+
   public static function assetFormItems($asset, $n) {
     $form['value'] = array(
       '#type' => 'textfield',

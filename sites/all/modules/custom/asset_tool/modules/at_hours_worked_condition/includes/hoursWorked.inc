@@ -3,6 +3,59 @@
 class hoursWorked extends assetToolConditionBase {
   static $machine_name = 'hours_worked';
 
+  public static function settingsForm() {
+
+    $settings = variable_get('app_system_hours_worked', array());
+
+    $form = array(
+      '#type' => 'fieldset',
+      '#title' => t('Hours Worked Settings'),
+      '#collapsible' => TRUE,
+      'scoring_profile' => array(
+        '#type' => 'item',
+        '#title' => t('Scoring Profile'),
+        'min' => array(
+          '#type' => 'item',
+          '#title' => t('Min'),
+          'x' => array(
+            '#type' => 'textfield',
+            '#title' => t('x'),
+            '#default_value' => isset($settings['scoring_profile']['min']['x'])? $settings['scoring_profile']['min']['x'] : NULL,
+          ),
+          'y' => array(
+            '#type' => 'textfield',
+            '#title' => t('y'),
+            '#default_value' => isset($settings['scoring_profile']['min']['y'])? $settings['scoring_profile']['min']['y'] : NULL,
+          ),
+        ),
+        'max' => array(
+          '#type' => 'item',
+          '#title' => t('Max'),
+          'x' => array(
+            '#type' => 'textfield',
+            '#title' => t('x'),
+            '#default_value' => isset($settings['scoring_profile']['max']['x'])? $settings['scoring_profile']['max']['x'] : NULL,
+          ),
+          'y' => array(
+            '#type' => 'textfield',
+            '#title' => t('y'),
+            '#default_value' => isset($settings['scoring_profile']['max']['y'])? $settings['scoring_profile']['max']['y'] : NULL,
+          ),
+        )
+      ),
+    );
+
+    return $form;
+  }
+
+  public static function settingsFormValidate($form, &$form_state) {
+
+  }
+
+  public static function settingsFormSubmit($form, &$form_state) {
+    variable_set('app_system_hours_worked', $form_state['values']['hours_worked']);
+  }
+
   public static function assetFormItems($asset, $n) {
     $form['value'] = array(
       '#type' => 'textfield',
