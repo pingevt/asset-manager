@@ -65,7 +65,7 @@ dpm($entity->data);
     // Save/Update data
     foreach ($entity->data as $n => $r) {
 dpm($r);
-      //if ()
+      if (!$this->isDataRecordEmpty($r)) {
         // Save data record.
         $data = array();
         if (isset($r['adid'])) {
@@ -77,7 +77,7 @@ dpm($r);
         );
 
         foreach ($r as $mod => $vals) {
-          if ($mod != 'adid') {
+          if ($mod != 'adid' && $mod != 'delete' ) {
             foreach ($vals as $field => $val) {
               $data[$mod . '_' . $field] = $val;
             }
@@ -100,10 +100,24 @@ dpm($data);
             drupal_set_message('Did not save data', 'error');
           }
         }
-      //}
+      }
     }
 
     return $return;
+  }
+
+  private function isDataRecordEmpty($r) {
+    $conditions = asset_tool_conditions_load();
+
+    $empty = TRUE;
+
+    foreach ($conditions as $condition) {
+      if ($condition['controller']::isDataRecordEmpty($r) === FALSE) {
+        $empty = FALSE;
+      }
+    }
+
+    return $empty;
   }
 }
 

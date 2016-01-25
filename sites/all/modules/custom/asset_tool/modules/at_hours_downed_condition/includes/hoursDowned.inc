@@ -35,4 +35,10 @@ class hoursDowned extends assetToolConditionBase {
       $rows[$n][] = $d['hours_downed_value'];
     }
   }
+
+  public static function isDataRecordEmpty($record) {
+    if (!empty($record['hours_downed']['value'])) {
+      return FALSE;
+    }
+  }
 }

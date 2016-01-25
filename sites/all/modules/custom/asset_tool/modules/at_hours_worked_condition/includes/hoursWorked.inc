@@ -35,4 +35,10 @@ class hoursWorked extends assetToolConditionBase {
       $rows[$n][] = $d['hours_worked_value'];
     }
   }
+
+  public static function isDataRecordEmpty($record) {
+    if (!empty($record['hours_worked']['value'])) {
+      return FALSE;
+    }
+  }
 }

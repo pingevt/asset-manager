@@ -178,7 +178,7 @@ function template_process_asset_full(&$vars) {
   $rows = array();
 
   foreach ($asset->data as $n => $data) {
-    $rows[] = array('n' => $n);
+    $rows[] = array('n' => ($n + 1));
   }
 
   $conditions = asset_tool_conditions_load();

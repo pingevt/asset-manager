@@ -91,7 +91,7 @@ function asset_form($form, &$form_state, $asset = NULL) {
     }
 
     field_attach_form('asset', $asset, $form, $form_state);
-dpm($asset->data);
+
     $data_count = count($asset->data) + 1;
     $form['data'] = array(
       '#type' => 'fieldset',
@@ -116,6 +116,14 @@ dpm($asset->data);
 
       foreach ($conditions as $con_id => $cond) {
         $form['data'][$i][$con_id] = $cond['controller']::assetFormItems($asset, $i);
+      }
+
+      if ($i == ($data_count - 2)) {
+        $form['data'][$i]['delete'] = array(
+          '#type' => 'submit',
+          '#value' => 'Remove',
+          '#submit' => array('asset_form_delete_data'),
+        );
       }
     }
 
@@ -150,11 +158,27 @@ function asset_form_validate($form, &$form_state) {
  * Implements hook_form_submit().
  */
 function asset_form_submit($form, &$form_state) {
+dpm('submit');
   $asset = entity_ui_form_submit_build_entity($form, $form_state);
   $asset->save();
   drupal_set_message(t('@name has been saved.', array('@name' => $asset->name)));
   // $form_state['redirect'] = 'admin/content/asset';
   $form_state['redirect'] = 'asset/' . $asset->aid;
+}
+
+function asset_form_delete_data($form, &$form_state) {
+dpm('delete data');
+dpm($form_state);
+  $record_n = $form_state['triggering_element']['#array_parents'][1];
+  $asset_id = $form_state['asset']->aid;
+
+  $num_deleted = db_delete('asset_data')
+    ->condition('aid', $asset_id)
+    ->condition('n', $record_n)
+    ->execute();
+
+dpm($num_deleted);
+
 }
 
 /**
