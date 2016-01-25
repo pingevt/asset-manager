@@ -117,11 +117,45 @@ class AssetUIController extends EntityDefaultUIController {
    */
   public function hook_menu() {
     $items = parent::hook_menu();
+
+    $wildcard = isset($this->entityInfo['admin ui']['menu wildcard']) ? $this->entityInfo['admin ui']['menu wildcard'] : '%entity_object';
+
     $items[$this->path]['title'] = t('Asset');
     $items[$this->path]['description'] = t('Manage Assets, including fields.');
     $items[$this->path]['access callback'] = 'asset_access_callback';
     $items[$this->path]['access arguments'] = array('administer asset entities');
     $items[$this->path]['type'] = MENU_LOCAL_TASK;
+
+    $items['asset/' . $wildcard . '/edit'] = array(
+      'title' => 'Edit',
+      //'title callback' => 'entity_label',
+      //'title arguments' => array($this->entityType, 1),
+      'page callback' => 'entity_ui_get_form',
+      'page arguments' => array($this->entityType, 1),
+      'load arguments' => array($this->entityType),
+      'access callback' => 'entity_access',
+      'access arguments' => array('update', $this->entityType, 1),
+      'file' => 'asset.admin.inc',
+      'file path' => drupal_get_path('module', 'asset') . '/includes',
+      'type' => MENU_LOCAL_TASK,
+      'weight' => 1,
+    );
+
+    $items['asset/' . $wildcard . '/delete'] = array(
+      'title' => 'Delete',
+      'page callback' => 'drupal_get_form',
+      'page arguments' => array($this->entityType . '_operation_form', $this->entityType, 1, 2),
+      'load arguments' => array($this->entityType),
+      'access callback' => 'entity_access',
+      'access arguments' => array('delete', $this->entityType, 1),
+      'file' => 'asset.admin.inc',
+      'file path' => drupal_get_path('module', 'asset') . '/includes',
+      'type' => MENU_LOCAL_TASK,
+      'weight' => 2,
+    );
+
+dpm($items);
+
     return $items;
   }
 

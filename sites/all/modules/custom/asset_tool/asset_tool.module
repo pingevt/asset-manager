@@ -101,7 +101,7 @@ function asset_tool_schema_alter(&$schema) {
  */
 function asset_tool_modules_enabled($modules) {
   $table = 'asset_data';
-
+dpm($modules);
   foreach ($modules as $module) {
     $func = $module . '_asset_tool_condition';
     if (function_exists($func)) {
@@ -117,6 +117,8 @@ function asset_tool_modules_enabled($modules) {
         // Update fields
         foreach ($new_schema['fields'] as $field_id => $field_description) {
           if (!db_field_exists($table, $field_id)) {
+dpm($field_id);
+dpm('add field');
             $r = db_add_field($table, $field_id, $field_description);
           }
         }
@@ -135,15 +137,17 @@ function asset_tool_modules_uninstalled($modules) {
   foreach ($modules as $module) {
     $at_schema_settings = variable_get('at_schema_settings', array());
 
-    foreach($at_schema_settings[$module] as $cond_id => $new_schema) {
-      foreach ($new_schema['fields'] as $field_id => $field_description) {
-        if (db_field_exists($table, $field_id)) {
-          $r = db_drop_field($table, $field_id);
+    if (isset($at_schema_settings[$module])) {
+      foreach($at_schema_settings[$module] as $cond_id => $new_schema) {
+        foreach ($new_schema['fields'] as $field_id => $field_description) {
+          if (db_field_exists($table, $field_id)) {
+            $r = db_drop_field($table, $field_id);
+          }
         }
       }
-    }
 
-    unset($at_schema_settings[$module]);
+      unset($at_schema_settings[$module]);
+    }
     variable_set('at_schema_settings', $at_schema_settings);
   }
 }

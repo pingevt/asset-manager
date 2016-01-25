@@ -1,12 +1,12 @@
 <?php
 
-class hoursWorked extends assetToolConditionBase {
-  static $machine_name = 'hours_worked';
+class hoursDowned extends assetToolConditionBase {
+  static $machine_name = 'hours_downed';
 
   public static function assetFormItems($asset, $n) {
     $form['value'] = array(
       '#type' => 'textfield',
-      '#title' => 'Hours worked',
+      '#title' => 'Hours down',
       '#default_value' => isset($asset->data[$n][self::$machine_name . '_value'])? $asset->data[$n][self::$machine_name . '_value'] : '',
     );
 
@@ -16,7 +16,7 @@ class hoursWorked extends assetToolConditionBase {
   public static function hookSchema() {
     return array(
       'fields' => array(
-        'hours_worked_value' => array(
+        'hours_downed_value' => array(
           'description' => 'The value.',
           'type' => 'int',
           'not null' => FALSE,
@@ -27,12 +27,12 @@ class hoursWorked extends assetToolConditionBase {
   }
 
   public static function viewFullHeader(&$header) {
-    $header[] = 'Hours Worked';
+    $header[] = 'Hours Downed';
   }
 
   public static function viewFullRows(&$rows, $data) {
     foreach ($data as $n => $d) {
-      $rows[$n][] = $d['hours_worked_value'];
+      $rows[$n][] = $d['hours_downed_value'];
     }
   }
 }
