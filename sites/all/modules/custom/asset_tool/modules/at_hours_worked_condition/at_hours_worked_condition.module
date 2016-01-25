@@ -6,6 +6,7 @@ function at_hours_worked_condition_asset_tool_condition() {
       'name' => 'Hours Worked',
       'controller' => 'hoursWorked',
       'dependencies' => array(),
+      'weight' => 0,
     ),
   );
 }
