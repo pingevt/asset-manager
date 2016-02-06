@@ -1,5 +1,7 @@
 <?php
 
+define('ASSET_TOOL_DIR', drupal_get_path('module', 'asset_tool'));
+
 /**
  * Implements hook_menu().
  */
@@ -16,6 +18,9 @@ function asset_tool_menu() {
 }
 
 function asset_tool_settings_form($form, &$form_state) {
+  drupal_add_css(ASSET_TOOL_DIR . '/chartist/chartist.min.css');
+  drupal_add_js(ASSET_TOOL_DIR . '/chartist/chartist.min.js');
+
   $form = array('#tree' => TRUE);
 
   // Check if assets exist... cannot change if assets exist.
@@ -38,7 +43,7 @@ function asset_tool_settings_form($form, &$form_state) {
   );
 
   $conditions = asset_tool_conditions_load();
-dpm($conditions);
+//dpm($conditions);
   foreach ($conditions as $cond_id => $cond) {
     $form[$cond_id] = $cond['controller']::settingsForm();
 
@@ -58,7 +63,7 @@ dpm($conditions);
 }
 
 function asset_tool_settings_form_validate($form, &$form_state) {
-dpm($form_state);
+//dpm($form_state);
   //variable_set('app_system_period', $form);
 
   $conditions = asset_tool_conditions_load();

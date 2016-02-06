@@ -25,6 +25,10 @@ class assetToolConditionBase implements assetToolConditionBaseInterface {
     return array();
   }
 
+  public static function settingsFormSubmit($form, &$form_state) {
+    variable_set('app_system_' . self::$machine_name, $form_state['values'][self::$machine_name]);
+  }
+
   public static function viewFullHeader(&$header) {}
 
   public static function viewFullRows(&$rows, $data) {}
