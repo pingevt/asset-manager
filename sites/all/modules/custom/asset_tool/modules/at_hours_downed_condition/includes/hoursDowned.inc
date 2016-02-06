@@ -3,20 +3,20 @@
 class hoursDowned extends assetToolConditionBase {
   static $machine_name = 'hours_downed';
 
-  public static function settingsForm() {
-    $settings = variable_get('app_system_' . self::$machine_name, array());
+  public static function settingsForm($asset_type_id) {
+    $settings = variable_get('app_system_' . $asset_type_id . '_' . self::$machine_name, array());
 
     if (!isset($settings['scoring_profile']['min']['x'])) {
-      $settings['scoring_profile']['min']['x'] = 0;
+      $settings['scoring_profile']['min']['x'] = 20;
     }
     if (!isset($settings['scoring_profile']['min']['y'])) {
       $settings['scoring_profile']['min']['y'] = 0;
     }
     if (!isset($settings['scoring_profile']['max']['x'])) {
-      $settings['scoring_profile']['max']['x'] = 0;
+      $settings['scoring_profile']['max']['x'] = 100;
     }
     if (!isset($settings['scoring_profile']['max']['y'])) {
-      $settings['scoring_profile']['max']['y'] = 0;
+      $settings['scoring_profile']['max']['y'] = 100;
     }
 
     $max_x = $settings['scoring_profile']['max']['x'];
@@ -24,7 +24,7 @@ class hoursDowned extends assetToolConditionBase {
     $min_x = $settings['scoring_profile']['min']['x'];
     $min_y = $settings['scoring_profile']['min']['y'];
 
-    $slope = ($max_y - $min_y) / ($max_x - $min_x);
+    $slope = (($max_x - $min_x) == 0)? '0' : ($max_y - $min_y) / ($max_x - $min_x);
     $b = $max_y - $slope * $max_x;
 
     $form = array(
@@ -67,9 +67,9 @@ class hoursDowned extends assetToolConditionBase {
           ),
         ),
         'equation' => array(
-          '#markup' => 'y = '.$slope.'x + '. $b,
+          '#markup' => 'y = ' . $slope . 'x + ' . $b,
         ),
-        '#suffix' => '<div class="ct-chart-' . self::$machine_name . '"></div>
+        '#suffix' => '<div class="ct-chart-' . self::$machine_name . '-' . $asset_type_id . '"></div>
       <script>
 var options = {
 axisX: {
@@ -97,7 +97,7 @@ var data = {
     ]
   ]
 };
-new Chartist.Line(\'.ct-chart-' . self::$machine_name . '\', data, options);
+new Chartist.Line(\'.ct-chart-' . self::$machine_name . '-' . $asset_type_id . '\', data, options);
       </script>
         ',
       ),
@@ -106,12 +106,12 @@ new Chartist.Line(\'.ct-chart-' . self::$machine_name . '\', data, options);
     return $form;
   }
 
-  public static function settingsFormValidate($form, &$form_state) {
+  public static function settingsFormValidate($form, &$form_state, $asset_type_id) {
 
   }
 
-  public static function settingsFormSubmit($form, &$form_state) {
-    variable_set('app_system_' . self::$machine_name, $form_state['values'][self::$machine_name]);
+  public static function settingsFormSubmit($form, &$form_state, $asset_type_id) {
+    variable_set('app_system_' . $asset_type_id . '_' . self::$machine_name, $form_state['values'][$asset_type_id][self::$machine_name]);
   }
 
   public static function assetFormItems($asset, $n) {

@@ -42,12 +42,25 @@ function asset_tool_settings_form($form, &$form_state) {
     '#disabled' => (count($result) > 0),
   );
 
-  $conditions = asset_tool_conditions_load();
-//dpm($conditions);
-  foreach ($conditions as $cond_id => $cond) {
-    $form[$cond_id] = $cond['controller']::settingsForm();
+  if (count($result) > 0) {
+    $asset_types = asset_types_get();
+    $conditions = asset_tool_conditions_load();
+
+    foreach ($asset_types as $asset_type_id => $asset_type) {
+      $form[$asset_type_id] = array(
+        '#type' => 'fieldset',
+        '#title' => t($asset_type),
+        '#collapsible' => TRUE,
+        '#collapsed' => TRUE,
+      );
+
+      foreach ($conditions as $cond_id => $cond) {
+        $form[$asset_type_id][$cond_id] = $cond['controller']::settingsForm($asset_type_id);
+      }
+    }
 
   }
+
 
   $form['actions'] = array(
     '#type' => 'actions',
@@ -66,9 +79,13 @@ function asset_tool_settings_form_validate($form, &$form_state) {
 //dpm($form_state);
   //variable_set('app_system_period', $form);
 
+  $asset_types = asset_types_get();
   $conditions = asset_tool_conditions_load();
-  foreach ($conditions as $cond_id => $cond) {
-    $form[$cond_id] = $cond['controller']::settingsFormValidate($form, $form_state);
+
+  foreach ($asset_types as $asset_type_id => $asset_type) {
+    foreach ($conditions as $cond_id => $cond) {
+      $cond['controller']::settingsFormValidate($form, $form_state, $asset_type_id);
+    }
   }
 }
 
@@ -76,9 +93,12 @@ function asset_tool_settings_form_submit($form, &$form_state) {
 
   variable_set('app_system_period', $form_state['values']['app_system_period']);
 
+  $asset_types = asset_types_get();
   $conditions = asset_tool_conditions_load();
-  foreach ($conditions as $cond_id => $cond) {
-    $form[$cond_id] = $cond['controller']::settingsFormSubmit($form, $form_state);
+  foreach ($asset_types as $asset_type_id => $asset_type) {
+    foreach ($conditions as $cond_id => $cond) {
+      $cond['controller']::settingsFormSubmit($form, $form_state, $asset_type_id);
+    }
   }
 }
 
