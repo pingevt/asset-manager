@@ -17,6 +17,49 @@ function asset_tool_menu() {
   return $items;
 }
 
+/**
+ * Implementation of hook_theme.
+ */
+function asset_tool_theme() {
+  return array(
+    'coefficients_table' => array(
+      // The renderable element is the form.
+      'render element' => 'item',
+    ),
+  );
+}
+
+function theme_coefficients_table($vars) {
+dpm($vars);
+  // Get the userful values.
+  $item = $vars['item'];
+  $title = $item['#title'];
+  $rows = $item['rows'];
+  $header = $item['#header'];
+
+  // Setup the structure to be rendered and returned.
+  $content = array(
+    '#theme' => 'table',
+    '#header' => $header,
+    '#rows' => array(),
+  );
+
+  // Traverse each row.  @see element_chidren().
+  foreach (element_children($rows) as $row_index) {
+    $row = array();
+    // Traverse each column in the row.  @see element_children().
+    foreach (element_children($rows[$row_index]) as $col_index) {
+      // Render the column form element.
+      $row[] = drupal_render($rows[$row_index][$col_index]);
+    }
+    // Add the row to the table.
+    $content['#rows'][] = $row;
+  }
+
+  // Redner the table and return.
+  return drupal_render($content);
+}
+
 function asset_tool_settings_form($form, &$form_state) {
   drupal_add_css(ASSET_TOOL_DIR . '/chartist/chartist.min.css');
   drupal_add_js(ASSET_TOOL_DIR . '/chartist/chartist.min.js');
@@ -51,14 +94,117 @@ function asset_tool_settings_form($form, &$form_state) {
         '#type' => 'fieldset',
         '#title' => t($asset_type),
         '#collapsible' => TRUE,
-        '#collapsed' => TRUE,
+        '#collapsed' => FALSE,
+      );
+
+      $form[$asset_type_id]['coefficients'] = array(
+        '#theme' => 'coefficients_table',
+        '#title' => t('Composite score Coefficients'),
+        '#header' => array('', t('Month'), t('YTD'), t('LTD'), t('Total')),
+        'rows' => array(),
+        '#weight' => 100,
+      );
+
+      $i = 0;
+      $asset_type_coefficients = variable_get('app_' . $asset_type_id . '_coefficients', array());
+
+      $asset_type_coefficients_sum = 0;
+      $asset_type_coefficients_sum += isset($asset_type_coefficients['age']['month'])? $asset_type_coefficients['age']['month'] : 0;
+      $asset_type_coefficients_sum += isset($asset_type_coefficients['age']['ytd'])? $asset_type_coefficients['age']['ytd'] : 0;
+      $asset_type_coefficients_sum += isset($asset_type_coefficients['age']['ltd'])? $asset_type_coefficients['age']['ltd'] : 0;
+
+      $form[$asset_type_id]['coefficients']['rows']['age'] = array(
+        'label' => array(
+          '#markup' => 'Age',
+        ),
+        'month' => array(
+          '#type' => 'textfield',
+          '#title' => t('Month'),
+          '#size' => 6,
+          '#title_display' => 'invisible',
+          '#default_value' => isset($asset_type_coefficients['age']['month'])? $asset_type_coefficients['age']['month'] : 0,
+        ),
+        'ytd' => array(
+          '#type' => 'textfield',
+          '#title' => t('YTD'),
+          '#size' => 6,
+          '#title_display' => 'invisible',
+          '#default_value' => isset($asset_type_coefficients['age']['ytd'])? $asset_type_coefficients['age']['ytd'] : 0,
+        ),
+        'ltd' => array(
+          '#type' => 'textfield',
+          '#title' => t('LTD'),
+          '#size' => 6,
+          '#title_display' => 'invisible',
+          '#default_value' => isset($asset_type_coefficients['age']['ltd'])? $asset_type_coefficients['age']['ltd'] : 0,
+        ),
+        'total' => array(
+          '#type' => 'textfield',
+          '#title' => t('Total'),
+          '#size' => 6,
+          '#title_display' => 'invisible',
+          '#default_value' => $asset_type_coefficients_sum,
+        ),
       );
 
       foreach ($conditions as $cond_id => $cond) {
         $form[$asset_type_id][$cond_id] = $cond['controller']::settingsForm($asset_type_id);
-      }
-    }
 
+        $asset_type_coefficients_sum = 0;
+        $asset_type_coefficients_sum += isset($asset_type_coefficients[$cond_id]['month'])? $asset_type_coefficients[$cond_id]['month'] : 0;
+        $asset_type_coefficients_sum += isset($asset_type_coefficients[$cond_id]['ytd'])? $asset_type_coefficients[$cond_id]['ytd'] : 0;
+        $asset_type_coefficients_sum += isset($asset_type_coefficients[$cond_id]['ltd'])? $asset_type_coefficients[$cond_id]['ltd'] : 0;
+
+        $form[$asset_type_id]['coefficients']['rows'][$cond_id] = array(
+          'label' => array(
+            '#markup' => $cond['name'],
+          ),
+          'month' => array(
+            '#type' => 'textfield',
+            '#title' => t('Month'),
+            '#size' => 6,
+            '#title_display' => 'invisible',
+            '#default_value' => isset($asset_type_coefficients[$cond_id]['month'])? $asset_type_coefficients[$cond_id]['month'] : 0,
+          ),
+          'ytd' => array(
+            '#type' => 'textfield',
+            '#title' => t('YTD'),
+            '#size' => 6,
+            '#title_display' => 'invisible',
+            '#default_value' => isset($asset_type_coefficients[$cond_id]['ytd'])? $asset_type_coefficients[$cond_id]['ytd'] : 0,
+          ),
+          'ltd' => array(
+            '#type' => 'textfield',
+            '#title' => t('LTD'),
+            '#size' => 6,
+            '#title_display' => 'invisible',
+            '#default_value' => isset($asset_type_coefficients[$cond_id]['ltd'])? $asset_type_coefficients[$cond_id]['ltd'] : 0,
+          ),
+          'total' => array(
+            '#type' => 'textfield',
+            '#title' => t('Total'),
+            '#size' => 6,
+            '#title_display' => 'invisible',
+            '#default_value' => $asset_type_coefficients_sum,
+          ),
+        );
+
+        $i++;
+      }
+
+      $form[$asset_type_id]['coefficients']['rows']['main_total'] = array(
+        'label' => array(),
+        'month' => array(),
+        'ytd' => array(),
+        'ltd' => array(),
+        'total' => array(
+          '#type' => 'textfield',
+          '#title' => t('Total'),
+          '#size' => 6,
+          '#title_display' => 'invisible',
+        ),
+      );
+    }
   }
 
 
@@ -95,7 +241,10 @@ function asset_tool_settings_form_submit($form, &$form_state) {
 
   $asset_types = asset_types_get();
   $conditions = asset_tool_conditions_load();
+
   foreach ($asset_types as $asset_type_id => $asset_type) {
+    variable_set('app_' . $asset_type_id . '_coefficients', $form_state['values'][$asset_type_id]['coefficients']['rows']);
+
     foreach ($conditions as $cond_id => $cond) {
       $cond['controller']::settingsFormSubmit($form, $form_state, $asset_type_id);
     }
@@ -168,7 +317,7 @@ function asset_tool_schema_alter(&$schema) {
  */
 function asset_tool_modules_enabled($modules) {
   $table = 'asset_data';
-dpm($modules);
+
   foreach ($modules as $module) {
     $func = $module . '_asset_tool_condition';
     if (function_exists($func)) {
@@ -184,8 +333,6 @@ dpm($modules);
         // Update fields
         foreach ($new_schema['fields'] as $field_id => $field_description) {
           if (!db_field_exists($table, $field_id)) {
-dpm($field_id);
-dpm('add field');
             $r = db_add_field($table, $field_id, $field_description);
           }
         }
