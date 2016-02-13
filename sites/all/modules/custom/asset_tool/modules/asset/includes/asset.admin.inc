@@ -11,6 +11,7 @@ function asset_form($form, &$form_state, $asset = NULL) {
   $form = array();
   $settings = variable_get('app_system_period', '');
 
+dpm($settings);
   if ($settings != '') {
     $form['name'] = array(
       '#title' => t('Name'),
@@ -73,8 +74,9 @@ function asset_form($form, &$form_state, $asset = NULL) {
     case 'annually':
       break;
     }
-
+dpm($settings);
     if ($settings != 'annually') {
+dpm(1);
       $form['start_period'] = array(
         '#type' => 'select',
         '#title' => t('Starting Period'),
@@ -84,6 +86,7 @@ function asset_form($form, &$form_state, $asset = NULL) {
       );
     }
     else {
+dpm(2);
       $form['start_period'] = array(
         '#type' => 'hidden',
         '#value' => '0',
@@ -158,7 +161,6 @@ function asset_form_validate($form, &$form_state) {
  * Implements hook_form_submit().
  */
 function asset_form_submit($form, &$form_state) {
-dpm('submit');
   $asset = entity_ui_form_submit_build_entity($form, $form_state);
   $asset->save();
   drupal_set_message(t('@name has been saved.', array('@name' => $asset->name)));

@@ -152,4 +152,54 @@ new Chartist.Line(\'.ct-chart-' . self::$machine_name . '-' . $asset_type_id . '
       return FALSE;
     }
   }
+
+  public static function reportTableHeaderRow(&$column_headers, $num_of_columns_section, $delta) {
+    $column_headers[$num_of_columns_section * 0 + $delta] = 'Hours Down';
+    $column_headers[$num_of_columns_section * 1 + $delta] = 'Hours Down';
+    $column_headers[$num_of_columns_section * 2 + $delta] = 'Hours Down';
+    $column_headers[$num_of_columns_section * 3 + $delta] = 'Hours Down';
+    $column_headers[$num_of_columns_section * 4 + $delta] = 'Down Ratio';
+    $column_headers[$num_of_columns_section * 5 + $delta] = 'Down Ratio';
+    $column_headers[$num_of_columns_section * 6 + $delta] = 'Down Ratio';
+    $column_headers[$num_of_columns_section * 7 + $delta] = 'Down Ratio';
+    $column_headers[$num_of_columns_section * 8 + $delta] = 'Down Ratio';
+    $column_headers[$num_of_columns_section * 9 + $delta] = 'Down Ratio';
+  }
+
+  public static function runReport(&$report, $asset, $data, $ytd_start_n) {
+    $settings = variable_get('app_system_' . $asset->type . '_' . self::$machine_name, array());
+
+    $n_last = count($data) - 1;
+
+    $n1_values_ytd = 0;
+    $n1_values_ltd = 0;
+
+    for ($i=0; $i<$n_last; $i++) {
+      $n1_values_ltd += $data[$i][self::$machine_name . '_value'];
+      if ($i >= $ytd_start_n) {
+        $n1_values_ytd += $data[$i][self::$machine_name . '_value'];
+      }
+    }
+
+    $n_values_ytd = ($n1_values_ytd + $data[$n_last][self::$machine_name . '_value']);
+    $n_values_ltd = ($n1_values_ltd + $data[$n_last][self::$machine_name . '_value']);
+
+    $ranking_metrics_period = $data[$n_last][self::$machine_name . '_value'] / $data[$n_last]['hours_worked_value'];
+
+    $ranking_metrics_ytd = $n_values_ytd / $report['n_data']['ytd']['hours_worked'];
+    $ranking_metrics_ltd = $n_values_ltd / $report['n_data']['ltd']['hours_worked'];
+
+
+    $report['n1_data']['ytd'][self::$machine_name] = $n1_values_ytd;
+    $report['n1_data']['ltd'][self::$machine_name] = $n1_values_ltd;
+    $report['n_data']['ytd'][self::$machine_name] = $n_values_ytd;
+    $report['n_data']['ltd'][self::$machine_name] = $n_values_ltd;
+    $report['ranking_metrics']['period'][self::$machine_name] = round($ranking_metrics_period, 2);
+    $report['ranking_metrics']['ytd'][self::$machine_name] = round($ranking_metrics_ytd, 2);
+    $report['ranking_metrics']['ltd'][self::$machine_name] = round($ranking_metrics_ltd, 2);
+    $report['ranking_metrics_scores']['period'][self::$machine_name] = NULL;
+    $report['ranking_metrics_scores']['ytd'][self::$machine_name] = Asset::getScore($ranking_metrics_ytd, $settings['scoring_profile']['min']['x'], $settings['scoring_profile']['max']['x'], $settings['scoring_profile']['min']['y'], $settings['scoring_profile']['max']['y']);
+    $report['ranking_metrics_scores']['ltd'][self::$machine_name] = Asset::getScore($ranking_metrics_ltd, $settings['scoring_profile']['min']['x'], $settings['scoring_profile']['max']['x'], $settings['scoring_profile']['min']['y'], $settings['scoring_profile']['max']['y']);
+
+  }
 }

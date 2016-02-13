@@ -6,6 +6,104 @@ class Asset extends Entity {
     return empty($this->title) ? 'Untitled Asset' : $this->title;
   }
 
+  public function runReport() {
+    dpm('running report');
+dpm($this);
+    $app_system_period = variable_get('app_system_period', '');
+    $periods_in_year = array(
+      'monthly' => 12,
+      'quarterly' => 4,
+      'biannually' => 2,
+      'annually' => 1,
+    );
+
+    $n = count($this->data);
+
+    $first_year_period_count = $periods_in_year[$app_system_period] - ($this->start_period - 1);
+dpm($first_year_period_count);
+
+    $ytd_periods = ($n - $first_year_period_count) % $periods_in_year[$app_system_period];
+
+    if ($ytd_periods < 0) {
+      $ytd_periods = $n;
+    }
+dpm('ytd_periods: ' . $ytd_periods);
+    $ytd_start_n = $n - $ytd_periods;
+dpm('ytd_n: ' . $ytd_start_n);
+
+    $report = array();
+
+    $target_age_settings = variable_get('app_target_age_settings', array());
+
+    if ($n > 1) {
+      $report = array(
+        'n1_data' => array(
+          'ytd' => array(
+            'age' => $ytd_periods - 1,
+          ),
+          'ltd' => array(
+            'age' => ($n - 1),
+          ),
+        ),
+        'n_data' => array(
+          'ytd' => array(
+            'age' => $ytd_periods,
+          ),
+          'ltd' => array(
+            'age' => $n,
+          ),
+        ),
+        'ranking_metrics' => array(
+          'period' => array(
+            'age' => NULL,
+          ),
+          'ytd' => array(
+            'age' => NULL,
+          ),
+          'ltd' => array(
+            'age' => round(($n / $target_age_settings[$this->type]), 2),
+          ),
+        ),
+        'ranking_metrics_scores' => array(
+          'period' => array(
+            'age' => NULL,
+          ),
+          'ytd' => array(
+            'age' => NULL,
+          ),
+          'ltd' => array(
+            'age' => round($this->getScore(($n / $target_age_settings[$this->type]), 0, 0, 0, 0), 2),
+          ),
+        ),
+        'total_score' => 0,
+      );
+
+      $conditions = asset_tool_conditions_load();
+      foreach ($conditions as $condition_id => $condition) {
+        $condition['controller']::runReport($report, $this, $this->data, $ytd_start_n);
+      }
+    }
+
+
+dpm($report);
+    $up = entity_get_controller($this->entityType)->saveReport($report, $this);
+dpm($up);
+  }
+
+  public static function getScore($value, $x_min, $x_max, $y_min, $y_max) {
+    if ($value > $x_max) {
+      return $y_max;
+    }
+    elseif ($value < $x_min) {
+      return $y_min;
+    }
+    else {
+      $slope = (($x_max - $x_min) == 0)? '0' : ($y_max - $y_min) / ($x_max - $x_min);
+      $b = $y_max - $slope * $x_max;
+
+      return $value * $slope + $b;
+    }
+  }
 }
 
 class AssetController extends EntityAPIController {
@@ -26,6 +124,12 @@ class AssetController extends EntityAPIController {
 
     // Load data
     foreach ($entities as &$entity) {
+      /*
+      if(is_string($entity->report_data)) {
+        $entity->report_data = unserialize($entity->report_data);
+      }
+      */
+
       $entity->data = array();
 
       $q = db_select('asset_data', 'ad');
@@ -118,6 +222,18 @@ dpm($data);
     }
 
     return $empty;
+  }
+
+  public function saveReport($report, $asset) {
+    $data = serialize($report);
+
+    $num_updated = db_update('asset')
+      ->fields(array(
+        'report_data' => $data,
+      ))
+      ->condition('aid', $asset->aid)
+      ->execute();
+    return $num_updated;
   }
 }
 

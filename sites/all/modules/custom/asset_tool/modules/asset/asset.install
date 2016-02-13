@@ -57,6 +57,12 @@ function asset_schema() {
         'not null' => TRUE,
         'default' => 0,
       ),
+      'report_data' => array(
+        'description' => 'A collection of data for reports.',
+        'type' => 'blob',
+        'not null' => FALSE,
+        'size' => 'big',
+      ),
       'created' => array(
         'description' => 'The Unix timestamp when the asset was created.',
         'type' => 'int',

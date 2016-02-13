@@ -18,8 +18,10 @@
     <div><?php print $asset->start_period_year; ?></div>
     <label>Starting Period:</lable>
     <div><?php print $asset->start_period; ?></div>
-    <?php
-      print render($content);
-    ?>
+    <?php print render($content); ?>
+
+    <a href="/asset/<?php print $asset->aid; ?>/run-report">Run Reports</a>
+
+    <?php print render($report); ?>
   </div>
 </div>

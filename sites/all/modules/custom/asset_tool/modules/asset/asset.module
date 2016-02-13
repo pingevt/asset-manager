@@ -69,6 +69,14 @@ function asset_menu() {
     'access arguments' => array('view', 1),
   );
 
+  $items['asset/%asset/run-report'] = array(
+    'title' => 'Asset',
+    'page callback' => 'asset_run_report',
+    'page arguments' => array(1),
+    'access callback' => 'asset_access_menu_callback',
+    'access arguments' => array('view', 1),
+  );
+
   $items['admin/content/asset/bulk/delete/%'] = array(
     'title' => 'Bulk Delete Asset',
     'page callback' => 'drupal_get_form',
@@ -194,6 +202,168 @@ function template_process_asset_full(&$vars) {
     '#header' => $header,
     '#rows' => $rows,
   );
+
+  // Report
+dpm($vars);
+  $report_data = array();
+  if (is_string($asset->report_data)) {
+    $report_data = unserialize($asset->report_data);
+  }
+dpm($report_data);
+  $num_of_columns_section = count($conditions) + 1;
+  $total_num_of_columns = $num_of_columns_section * 10 + 1;
+
+  if (!empty($report_data)) {
+    $vars['report'] = array(
+      '#theme' => 'table',
+      '#header' => array(array('data' => 'Data', 'colspan' => ($total_num_of_columns))),
+      '#rows' => array(
+        array(
+          array(
+            'data' => 'N-1 Data Archive',
+            'colspan' => $num_of_columns_section * 2,
+            'header' => TRUE
+          ),
+          array(
+            'data' => 'N Data',
+            'colspan' => $num_of_columns_section * 2,
+            'header' => TRUE
+          ),
+          array(
+            'data' => 'Ranking Metric Values',
+            'colspan' => $num_of_columns_section * 3,
+            'header' => TRUE
+          ),
+          array(
+            'data' => 'Ranking Metric Scores',
+            'colspan' => $num_of_columns_section * 3,
+            'header' => TRUE
+          ),
+          array(
+            'data' => 'Total',
+            'colspan' => 1,
+            'header' => TRUE
+          )
+        ),
+        array(
+          array(
+            'data' => 'YTD N-1',
+            'colspan' => $num_of_columns_section,
+            'header' => TRUE,
+          ),
+          array(
+            'data' => 'LTD N-1',
+            'colspan' => $num_of_columns_section,
+            'header' => TRUE,
+          ),
+          array(
+            'data' => 'YTD N',
+            'colspan' => $num_of_columns_section,
+            'header' => TRUE,
+          ),
+          array(
+            'data' => 'LTD N',
+            'colspan' => $num_of_columns_section,
+            'header' => TRUE,
+          ),
+          array(
+            'data' => 'This Period',
+            'colspan' => $num_of_columns_section,
+            'header' => TRUE,
+          ),
+          array(
+            'data' => 'YTD',
+            'colspan' => $num_of_columns_section,
+            'header' => TRUE,
+          ),
+          array(
+            'data' => 'LTD',
+            'colspan' => $num_of_columns_section,
+            'header' => TRUE,
+          ),
+          array(
+            'data' => 'This Period',
+            'colspan' => $num_of_columns_section,
+            'header' => TRUE,
+          ),
+          array(
+            'data' => 'YTD',
+            'colspan' => $num_of_columns_section,
+            'header' => TRUE,
+          ),
+          array(
+            'data' => 'LTD',
+            'colspan' => $num_of_columns_section,
+            'header' => TRUE,
+          ),
+          array(
+            'data' => '',
+            'colspan' => 1,
+            'header' => FALSE,
+          ),
+        ),
+      ),
+    );
+
+    $column_headers = array_fill(0, $total_num_of_columns, NULL);
+
+    $column_headers[0] = 'Periods worked in year';
+    $column_headers[$num_of_columns_section] = 'Age in Periods';
+    $column_headers[$num_of_columns_section * 2] = 'Periods worked in year';
+    $column_headers[$num_of_columns_section * 3] = 'Age in Periods';
+    $column_headers[$num_of_columns_section * 4] = '';
+    $column_headers[$num_of_columns_section * 5] = '';
+    $column_headers[$num_of_columns_section * 6] = 'Age LTD';
+    $column_headers[$num_of_columns_section * 7] = '';
+    $column_headers[$num_of_columns_section * 8] = '';
+    $column_headers[$num_of_columns_section * 9] = 'Age';
+    $column_headers[$total_num_of_columns-1] = 'AS';
+
+    $delta = 1;
+    foreach ($conditions as $condition_id => $condition) {
+      $condition['controller']::reportTableHeaderRow($column_headers, $num_of_columns_section, $delta);
+      $delta++;
+    }
+
+    $vars['report']['#rows'][] = $column_headers;
+
+    // Add in values
+    $values_row = array();
+
+    foreach ($report_data as $section => $section_data) {
+      if (is_array($section_data)) {
+        foreach ($section_data as $subsection => $subsection_data) {
+          if(is_array($subsection_data)) {
+            foreach ($subsection_data as $key => $value) {
+              if ($value === NULL) {
+                $values_row[] = array(
+                  'data' => $value,
+                  'class' => array('null'),
+                );
+              }
+              else {
+                $values_row[] = array(
+                  'data' => $value,
+                );
+              }
+            }
+          }
+        }
+      }
+      else {
+        $values_row[] = array(
+          'data' => $value,
+        );
+      }
+    }
+
+    $vars['report']['#rows'][] = $values_row;
+  }
+  else {
+    $vars['report'] = array(
+      '#markup' => '<div>Re-run report to see fresh data</div>',
+    );
+  }
 }
 
 
@@ -237,6 +407,11 @@ function asset_view_entity($asset) {
   // Path not entity.
   $asset_output = theme('asset_full', array('asset' => $asset));
   return $asset_output;
+}
+
+function asset_run_report($asset) {
+  $asset->runReport();
+  drupal_goto('asset/' . $asset->aid);
 }
 
 /**
