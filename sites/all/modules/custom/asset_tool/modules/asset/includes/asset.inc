@@ -75,7 +75,7 @@ dpm('ytd_n: ' . $ytd_start_n);
             'age' => round($this->getScore(($n / $target_age_settings[$this->type]), 0, 0, 0, 0), 2),
           ),
         ),
-        'total_score' => 0,
+        'total_score' => NULL,
       );
 
       $conditions = asset_tool_conditions_load();
@@ -84,10 +84,17 @@ dpm('ytd_n: ' . $ytd_start_n);
       }
     }
 
+    $coefficient_settings = variable_get('app_' . $this->type . '_coefficients', array());
 
-dpm($report);
+    $total_score = 0;
+    foreach ($report['ranking_metrics_scores'] as $timeframe => $tf_data) {
+      foreach ($tf_data as $condition_id => $value) {
+        $total_score += $coefficient_settings[$condition_id][$timeframe] * $value;
+      }
+    }
+    $report['total_score'] = $total_score;
+
     $up = entity_get_controller($this->entityType)->saveReport($report, $this);
-dpm($up);
   }
 
   public static function getScore($value, $x_min, $x_max, $y_min, $y_max) {

@@ -75,9 +75,9 @@ var options = {
 axisX: {
   type: Chartist.FixedScaleAxis,
   low: 0,
-  high: 100,
+  high: .5,
   divisor: 4,
-  ticks: [0, 25, 50, 75, 100]
+  ticks: [0, .1, .2, .3, .4, .5]
 },
 axisY: {
   type: Chartist.FixedScaleAxis,

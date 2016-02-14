@@ -205,17 +205,10 @@ function asset_tool_settings_form($form, &$form_state) {
         ),
       );
 
-
-
-
-
-
-
-
       $form[$asset_type_id]['coefficients'] = array(
         '#theme' => 'coefficients_table',
         '#title' => t('Composite score Coefficients'),
-        '#header' => array('', t('Month'), t('YTD'), t('LTD'), t('Total')),
+        '#header' => array('', t('Period'), t('YTD'), t('LTD'), t('Total')),
         'rows' => array(),
         '#weight' => 100,
       );
@@ -224,7 +217,7 @@ function asset_tool_settings_form($form, &$form_state) {
       $asset_type_coefficients = variable_get('app_' . $asset_type_id . '_coefficients', array());
 
       $asset_type_coefficients_sum = 0;
-      $asset_type_coefficients_sum += isset($asset_type_coefficients['age']['month'])? $asset_type_coefficients['age']['month'] : 0;
+      $asset_type_coefficients_sum += isset($asset_type_coefficients['age']['period'])? $asset_type_coefficients['age']['period'] : 0;
       $asset_type_coefficients_sum += isset($asset_type_coefficients['age']['ytd'])? $asset_type_coefficients['age']['ytd'] : 0;
       $asset_type_coefficients_sum += isset($asset_type_coefficients['age']['ltd'])? $asset_type_coefficients['age']['ltd'] : 0;
 
@@ -232,12 +225,12 @@ function asset_tool_settings_form($form, &$form_state) {
         'label' => array(
           '#markup' => 'Age',
         ),
-        'month' => array(
+        'period' => array(
           '#type' => 'textfield',
-          '#title' => t('Month'),
+          '#title' => t('Period'),
           '#size' => 6,
           '#title_display' => 'invisible',
-          '#default_value' => isset($asset_type_coefficients['age']['month'])? $asset_type_coefficients['age']['month'] : 0,
+          '#default_value' => isset($asset_type_coefficients['age']['period'])? $asset_type_coefficients['age']['period'] : 0,
         ),
         'ytd' => array(
           '#type' => 'textfield',
@@ -266,7 +259,7 @@ function asset_tool_settings_form($form, &$form_state) {
         $form[$asset_type_id][$cond_id] = $cond['controller']::settingsForm($asset_type_id);
 
         $asset_type_coefficients_sum = 0;
-        $asset_type_coefficients_sum += isset($asset_type_coefficients[$cond_id]['month'])? $asset_type_coefficients[$cond_id]['month'] : 0;
+        $asset_type_coefficients_sum += isset($asset_type_coefficients[$cond_id]['period'])? $asset_type_coefficients[$cond_id]['period'] : 0;
         $asset_type_coefficients_sum += isset($asset_type_coefficients[$cond_id]['ytd'])? $asset_type_coefficients[$cond_id]['ytd'] : 0;
         $asset_type_coefficients_sum += isset($asset_type_coefficients[$cond_id]['ltd'])? $asset_type_coefficients[$cond_id]['ltd'] : 0;
 
@@ -274,12 +267,12 @@ function asset_tool_settings_form($form, &$form_state) {
           'label' => array(
             '#markup' => $cond['name'],
           ),
-          'month' => array(
+          'period' => array(
             '#type' => 'textfield',
             '#title' => t('Month'),
             '#size' => 6,
             '#title_display' => 'invisible',
-            '#default_value' => isset($asset_type_coefficients[$cond_id]['month'])? $asset_type_coefficients[$cond_id]['month'] : 0,
+            '#default_value' => isset($asset_type_coefficients[$cond_id]['period'])? $asset_type_coefficients[$cond_id]['period'] : 0,
           ),
           'ytd' => array(
             '#type' => 'textfield',
@@ -309,7 +302,7 @@ function asset_tool_settings_form($form, &$form_state) {
 
       $form[$asset_type_id]['coefficients']['rows']['main_total'] = array(
         'label' => array(),
-        'month' => array(),
+        'period' => array(),
         'ytd' => array(),
         'ltd' => array(),
         'total' => array(
@@ -336,9 +329,6 @@ function asset_tool_settings_form($form, &$form_state) {
 }
 
 function asset_tool_settings_form_validate($form, &$form_state) {
-//dpm($form_state);
-  //variable_set('app_system_period', $form);
-
   $asset_types = asset_types_get();
   $conditions = asset_tool_conditions_load();
 
@@ -350,7 +340,6 @@ function asset_tool_settings_form_validate($form, &$form_state) {
 }
 
 function asset_tool_settings_form_submit($form, &$form_state) {
-dpm($form_state);
   variable_set('app_system_period', $form_state['values']['app_system_period']);
 
   $asset_types = asset_types_get();
@@ -359,7 +348,6 @@ dpm($form_state);
   //$target_age_settings = variable_get('app_target_age_settings', array());
   $target_age_settings = array();
   $age_settings = array();//
-
 
   foreach ($asset_types as $asset_type_id => $asset_type) {
     variable_set('app_' . $asset_type_id . '_coefficients', $form_state['values'][$asset_type_id]['coefficients']['rows']);

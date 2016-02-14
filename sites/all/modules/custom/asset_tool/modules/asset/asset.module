@@ -453,9 +453,11 @@ function asset_uri($asset) {
 function asset_types_get() {
   return array(
     'bulldozers' => 'Bulldozers',
+    /*
     'front_loaders' => 'Front Loaders',
     'dump_trucks' => 'Dump Trucks',
     'backhoes_excavators' => 'Backhoes/Excavators',
     'cranes' => 'Cranes',
+    */
   );
 }

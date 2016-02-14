@@ -175,10 +175,7 @@ new Chartist.Line(\'.ct-chart-' . self::$machine_name . '-' . $asset_type_id . '
   }
 
   public static function runReport(&$report, $asset, $data, $ytd_start_n) {
-dpm($report);
-dpm($data);
     $settings = variable_get('app_system_' . $asset->type . '_' . self::$machine_name, array());
-dpm($settings);
 
     $n_last = count($data) - 1;
     $n1_hours_worked_total = 0;
