@@ -1,0 +1,21 @@
+name = "Asset Tool Theme"
+description = "Theme developed specifically as an admin theme"
+screenshot = screenshot.png
+version = 7.x-1.0
+care = 7.x
+engine = phptemplate
+
+regions[navigation]     = 'Navigation'
+regions[header]         = 'Top Bar'
+regions[highlighted]    = 'Highlighted'
+regions[help]           = 'Help'
+regions[content]        = 'Content'
+regions[sidebar_first]  = 'Primary'
+regions[sidebar_second] = 'Secondary'
+regions[footer]         = 'Footer'
+regions[page_top]       = 'Page top'
+regions[page_bottom]    = 'Page bottom'
+
+stylesheets[all][] = css/style.css
+
+scripts[] = 'js/assetTool.js'
