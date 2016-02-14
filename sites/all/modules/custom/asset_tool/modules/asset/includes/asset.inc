@@ -7,8 +7,6 @@ class Asset extends Entity {
   }
 
   public function runReport() {
-    dpm('running report');
-dpm($this);
     $app_system_period = variable_get('app_system_period', '');
     $periods_in_year = array(
       'monthly' => 12,
@@ -20,16 +18,13 @@ dpm($this);
     $n = count($this->data);
 
     $first_year_period_count = $periods_in_year[$app_system_period] - ($this->start_period - 1);
-dpm($first_year_period_count);
 
     $ytd_periods = ($n - $first_year_period_count) % $periods_in_year[$app_system_period];
 
     if ($ytd_periods < 0) {
       $ytd_periods = $n;
     }
-dpm('ytd_periods: ' . $ytd_periods);
     $ytd_start_n = $n - $ytd_periods;
-dpm('ytd_n: ' . $ytd_start_n);
 
     $report = array();
 
@@ -172,10 +167,9 @@ class AssetController extends EntityAPIController {
     $entity->changed = REQUEST_TIME;
 
     $return = parent::save($entity, $transaction);
-dpm($entity->data);
+
     // Save/Update data
     foreach ($entity->data as $n => $r) {
-dpm($r);
       if (!$this->isDataRecordEmpty($r)) {
         // Save data record.
         $data = array();
@@ -194,7 +188,7 @@ dpm($r);
             }
           }
         }
-dpm($data);
+
         if (isset($data['adid'])) {
           if ($t = drupal_write_record('asset_data', $data, array('adid'))) {
             drupal_set_message($t . ' data', 'notice');
@@ -290,8 +284,6 @@ class AssetUIController extends EntityDefaultUIController {
       'type' => MENU_LOCAL_TASK,
       'weight' => 2,
     );
-
-dpm($items);
 
     return $items;
   }

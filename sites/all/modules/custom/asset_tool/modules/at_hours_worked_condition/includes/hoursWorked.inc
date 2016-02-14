@@ -199,11 +199,11 @@ new Chartist.Line(\'.ct-chart-' . self::$machine_name . '-' . $asset_type_id . '
     $report['n1_data']['ltd'][self::$machine_name] = $n1_hours_worked_total;
     $report['n_data']['ytd'][self::$machine_name] = $n_hoursworked_ytd;
     $report['n_data']['ltd'][self::$machine_name] = $n_hours_worked_total;
-    $report['ranking_metrics']['period'][self::$machine_name] = round($ranking_metrics_period, 2);
-    $report['ranking_metrics']['ytd'][self::$machine_name] = round($ranking_metrics_ytd, 2);
-    $report['ranking_metrics']['ltd'][self::$machine_name] = round($ranking_metrics_ltd, 2);
+    $report['ranking_metrics']['period'][self::$machine_name] = $ranking_metrics_period;
+    $report['ranking_metrics']['ytd'][self::$machine_name] = $ranking_metrics_ytd;
+    $report['ranking_metrics']['ltd'][self::$machine_name] = $ranking_metrics_ltd;
     $report['ranking_metrics_scores']['period'][self::$machine_name] = NULL;
-    $report['ranking_metrics_scores']['ytd'][self::$machine_name] = Asset::getScore($ranking_metrics_ytd, $settings['scoring_profile']['min']['x'], $settings['scoring_profile']['max']['x'], $settings['scoring_profile']['min']['y'], $settings['scoring_profile']['max']['y']);
-    $report['ranking_metrics_scores']['ltd'][self::$machine_name] = Asset::getScore($ranking_metrics_ltd, $settings['scoring_profile']['min']['x'], $settings['scoring_profile']['max']['x'], $settings['scoring_profile']['min']['y'], $settings['scoring_profile']['max']['y']);
+    $report['ranking_metrics_scores']['ytd'][self::$machine_name] = Asset::getScore(($ranking_metrics_ytd*100), $settings['scoring_profile']['min']['x'], $settings['scoring_profile']['max']['x'], $settings['scoring_profile']['min']['y'], $settings['scoring_profile']['max']['y']);
+    $report['ranking_metrics_scores']['ltd'][self::$machine_name] = Asset::getScore(($ranking_metrics_ltd*100), $settings['scoring_profile']['min']['x'], $settings['scoring_profile']['max']['x'], $settings['scoring_profile']['min']['y'], $settings['scoring_profile']['max']['y']);
   }
 }

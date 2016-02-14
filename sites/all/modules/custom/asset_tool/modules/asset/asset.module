@@ -204,12 +204,11 @@ function template_process_asset_full(&$vars) {
   );
 
   // Report
-dpm($vars);
   $report_data = array();
   if (is_string($asset->report_data)) {
     $report_data = unserialize($asset->report_data);
   }
-dpm($report_data);
+
   $num_of_columns_section = count($conditions) + 1;
   $total_num_of_columns = $num_of_columns_section * 10 + 1;
 
@@ -343,7 +342,7 @@ dpm($report_data);
               }
               else {
                 $values_row[] = array(
-                  'data' => $value,
+                  'data' => round($value, 2),
                 );
               }
             }
