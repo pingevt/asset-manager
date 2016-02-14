@@ -29,7 +29,7 @@ gulp.task('less', function() {
         .pipe(autoprefixer('last 2 version', 'safari 5', 'ie8', 'ie 9', 'opera 12.1', 'ios 6', 'android 4'))
         .pipe(gulp.dest('css'))
         .pipe(minifycss())
-        .pipe(rename('main.min.js'))
+        .pipe(rename('main.min.css'))
         .pipe(gulp.dest('css'))
         .pipe(notify({message: "LESS compiled"}));
 })
@@ -48,6 +48,9 @@ gulp.task('scripts', function() {
 gulp.task('watch', function() {
     gulp.watch('js/*.js', ['lint', 'scripts']);
     gulp.watch('less/*.less', ['less']);
+    gulp.watch('less/modules/*.less', ['less']);
+    gulp.watch('less/themes/*.less', ['less']);
+    gulp.watch('less/custom/*.less', ['less']);
 });
 
 gulp.task('default', ['lint', 'less', 'scripts', 'watch']);

@@ -9,7 +9,7 @@
   <?php endif; ?>
   <?php print render($title_suffix); ?>
 
-  <div class="content"<?php print $content_attributes; ?>>
+  <div class=""<?php print $content_attributes; ?>>
     <label>Type:</lable>
     <div><?php print $asset->type; ?></div>
     <label>Description:</lable>

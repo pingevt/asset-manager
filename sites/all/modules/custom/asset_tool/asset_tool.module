@@ -14,6 +14,22 @@ function asset_tool_menu() {
     'type' => MENU_SUGGESTED_ITEM,
   );
 
+  $items['assets'] = array(
+    'title' => 'Assets',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('asset_tool_all_assets'),
+    'access arguments' => array('access content'),
+    'type' => MENU_SUGGESTED_ITEM,
+  );
+
+  $items['assets/view-all-reports'] = array(
+    'title' => 'Assets',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('asset_tool_all_assets'),
+    'access arguments' => array('access content'),
+    'type' => MENU_SUGGESTED_ITEM,
+  );
+
   return $items;
 }
 
@@ -478,4 +494,54 @@ function asset_tool_modules_uninstalled($modules) {
     }
     variable_set('at_schema_settings', $at_schema_settings);
   }
+}
+
+function asset_tool_all_assets() {
+  $build = array();
+
+  $build['assets'] = array(
+    '#theme' => 'table',
+    '#header' => array('Asset', '# of Records', 'Most Recent Score', 'Actions'),
+    '#rows' => array(),
+    '#sticky' => FALSE,
+    '#attributes' => array(
+      'class' => array('table', 'table-hover'),
+    ),
+    '#prefix' => '<div class="block"><div class="block-content"><div class="table-responsive">',
+    '#suffix' => '</div></div></div>',
+  );
+
+  $q = new EntityFieldQuery();
+  $q->entityCondition('entity_type', 'asset');
+  $result = $q->execute();
+
+  $assets = array();
+  if (isset($result['asset'])) {
+    $aids = array_keys($result['asset']);
+    $assets = entity_load('asset', $aids);
+  }
+
+  foreach ($assets as $asset) {
+
+    $report = unserialize($asset->report_data);
+
+    $asset_uri = asset_uri($asset);
+
+    $str = '<div class="btn-group">
+        <a href="/'.$asset_uri['path'].'/edit" class="btn btn-xs btn-default" type="button" data-toggle="tooltip" title="" data-original-title="Edit Asset"><i class="fa fa-pencil"></i></a>
+        <a href="/'.$asset_uri['path'].'/run-report" class="btn btn-xs btn-default" type="button" data-toggle="tooltip" title="" data-original-title="Run Report"><i class="fa fa-line-chart"></i></a>
+        <a href="/'.$asset_uri['path'].'/delete" class="btn btn-xs btn-danger" type="button" data-toggle="tooltip" title="" data-original-title="Remove Asset"><i class="fa fa-times"></i></a>
+    </div>';
+
+    $row = array(
+      l($asset->name, $asset_uri['path']),
+      count($asset->data),
+      isset($report['total_score'])? round($report['total_score'], 2) : 'NULL',
+      $str,
+    );
+
+    $build['assets']['#rows'][] = $row;
+  }
+
+  return $build;
 }

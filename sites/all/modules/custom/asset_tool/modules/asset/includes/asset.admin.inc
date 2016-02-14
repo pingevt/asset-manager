@@ -11,7 +11,6 @@ function asset_form($form, &$form_state, $asset = NULL) {
   $form = array();
   $settings = variable_get('app_system_period', '');
 
-dpm($settings);
   if ($settings != '') {
     $form['name'] = array(
       '#title' => t('Name'),
@@ -74,9 +73,8 @@ dpm($settings);
     case 'annually':
       break;
     }
-dpm($settings);
+
     if ($settings != 'annually') {
-dpm(1);
       $form['start_period'] = array(
         '#type' => 'select',
         '#title' => t('Starting Period'),
@@ -86,7 +84,6 @@ dpm(1);
       );
     }
     else {
-dpm(2);
       $form['start_period'] = array(
         '#type' => 'hidden',
         '#value' => '0',

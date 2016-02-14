@@ -285,6 +285,18 @@ class AssetUIController extends EntityDefaultUIController {
       'weight' => 2,
     );
 
+    $items['asset/add'] = array(
+      'title callback' => 'entity_ui_get_action_title',
+      'title arguments' => array('add', $this->entityType),
+      'page callback' => 'entity_ui_get_form',
+      'page arguments' => array($this->entityType, NULL, 'add'),
+      'access callback' => 'entity_access',
+      'access arguments' => array('create', $this->entityType),
+      'file' => 'asset.admin.inc',
+      'file path' => drupal_get_path('module', 'asset') . '/includes',
+      'type' => MENU_LOCAL_ACTION,
+    );
+
     return $items;
   }
 
