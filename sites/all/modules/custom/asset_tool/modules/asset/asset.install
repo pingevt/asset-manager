@@ -16,6 +16,12 @@ function asset_schema() {
         'unsigned' => TRUE,
         'not null' => TRUE,
       ),
+      'external_id' => array(
+        'description' => 'asset externalID.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => FALSE,
+      ),
       'name' => array(
         'description' => 'asset name.',
         'type' => 'varchar',
@@ -63,6 +69,12 @@ function asset_schema() {
         'not null' => FALSE,
         'size' => 'big',
       ),
+      'total_score' => array(
+        'description' => 'Final Score for a report.',
+        'type' => 'float',
+        'not null' => FALSE,
+        'size' => 'medium',
+      ),
       'created' => array(
         'description' => 'The Unix timestamp when the asset was created.',
         'type' => 'int',
@@ -81,6 +93,7 @@ function asset_schema() {
       'character_created' => array('created'),
     ),
     'unique keys' => array(
+      'External ID' => array('external_id'),
     ),
     'foreign keys' => array(
       'asset_author' => array(
@@ -128,4 +141,31 @@ function asset_schema() {
   );
 
   return $schema;
+}
+
+/**
+ * Add newcol for final score
+ */
+function asset_update_7101() {
+  $spec = array(
+    'description' => 'Final Score for a report.',
+    'type' => 'float',
+    'not null' => FALSE,
+    'size' => 'medium',
+  );
+  db_add_field( 'asset', 'total_score', $spec);
+}
+
+/**
+ * Add newcol for final score
+ */
+function asset_update_7102() {
+  $spec = array(
+    'description' => 'asset externalID.',
+    'type' => 'varchar',
+    'length' => 255,
+    'not null' => FALSE,
+  );
+  db_add_field( 'asset', 'external_id', $spec);
+  db_add_unique_key('asset', 'External ID', array('external_id'));
 }

@@ -20,6 +20,14 @@ function asset_form($form, &$form_state, $asset = NULL) {
       '#maxlength' => 255,
     );
 
+    $form['external_id'] = array(
+      '#title' => t('External ID'),
+      '#type' => 'textfield',
+      '#default_value' => isset($asset->external_id) ? $asset->external_id : '',
+      '#required' => TRUE,
+      '#maxlength' => 255,
+    );
+
     $types = array('' => 'Select') + asset_types_get();
     $form['type'] = array(
       '#title' => t('Type'),
@@ -151,7 +159,22 @@ function asset_form($form, &$form_state, $asset = NULL) {
  * Implements hook_form_validate().
  */
 function asset_form_validate($form, &$form_state) {
+  // Validate external ID.
+  $external_id_tmp = $form_state['values']['external_id'];
 
+  $q = db_select('asset', 'a');
+  $q->fields('a');
+  $q->condition('external_id', $external_id_tmp);
+
+  if (isset($form_state['asset']->aid)) {
+    $q->condition('aid', $form_state['asset']->aid, '!=');
+  }
+
+  $result = $q->execute()->fetchAll();
+
+  if (count($result) > 0) {
+    form_set_error('external_id', 'This ID has already been used');
+  }
 }
 
 /**
@@ -166,8 +189,6 @@ function asset_form_submit($form, &$form_state) {
 }
 
 function asset_form_delete_data($form, &$form_state) {
-dpm('delete data');
-dpm($form_state);
   $record_n = $form_state['triggering_element']['#array_parents'][1];
   $asset_id = $form_state['asset']->aid;
 
@@ -175,9 +196,6 @@ dpm($form_state);
     ->condition('aid', $asset_id)
     ->condition('n', $record_n)
     ->execute();
-
-dpm($num_deleted);
-
 }
 
 /**

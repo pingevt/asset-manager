@@ -70,7 +70,6 @@ class Asset extends Entity {
             'age' => round($this->getScore(($n / $target_age_settings[$this->type]), 0, 0, 0, 0), 2),
           ),
         ),
-        'total_score' => NULL,
       );
 
       $conditions = asset_tool_conditions_load();
@@ -87,7 +86,8 @@ class Asset extends Entity {
         $total_score += $coefficient_settings[$condition_id][$timeframe] * $value;
       }
     }
-    $report['total_score'] = $total_score;
+
+    $this->total_score = $total_score;
 
     $up = entity_get_controller($this->entityType)->saveReport($report, $this);
   }
@@ -231,6 +231,7 @@ class AssetController extends EntityAPIController {
     $num_updated = db_update('asset')
       ->fields(array(
         'report_data' => $data,
+        'total_score' => $asset->total_score,
       ))
       ->condition('aid', $asset->aid)
       ->execute();

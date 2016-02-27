@@ -11109,12 +11109,75 @@ body.admin-menu .header-navbar-fixed #header-navbar {
 body.admin-menu .header-navbar-fixed #main-container {
   padding-top: 90px;
 }
+#page-title {
+  margin-bottom: 10px;
+}
 #block-system-main {
   background: transparent;
+}
+#block-system-main > .content {
+  padding: 0;
 }
 tr.even,
 tr.odd {
   background-color: transparent;
   border-bottom: none;
   padding: 0;
+}
+table.report-table th {
+  text-align: center;
+}
+table.report-table td {
+  min-width: 100px;
+}
+table.report-table td.null {
+  background-color: #f3f3f3;
+}
+table.report-table th.section-1 {
+  background-color: #abc123;
+}
+table.report-table th.section-1.period {
+  background-color: #ccdf51;
+}
+table.report-table th.section-1.ytd {
+  background-color: #d8e77c;
+}
+table.report-table th.section-1.ltd {
+  background-color: #e5efa7;
+}
+table.report-table th.section-2 {
+  background-color: #123abc;
+}
+table.report-table th.section-2.period {
+  background-color: #2f5ceb;
+}
+table.report-table th.section-2.ytd {
+  background-color: #5e80f0;
+}
+table.report-table th.section-2.ltd {
+  background-color: #8ca5f4;
+}
+table.report-table th.section-3 {
+  background-color: #fed123;
+}
+table.report-table th.section-3.period {
+  background-color: #fee16f;
+}
+table.report-table th.section-3.ytd {
+  background-color: #ffeca2;
+}
+table.report-table th.section-3.ltd {
+  background-color: #fff6d5;
+}
+table.report-table th.section-4 {
+  background-color: #abcfed;
+}
+table.report-table th.section-4.period {
+  background-color: #c0dbf2;
+}
+table.report-table th.section-4.ytd {
+  background-color: #e6f1fa;
+}
+table.report-table th.section-4.ltd {
+  background-color: #fbfdfe;
 }

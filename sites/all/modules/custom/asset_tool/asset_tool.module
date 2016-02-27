@@ -22,6 +22,14 @@ function asset_tool_menu() {
     'type' => MENU_SUGGESTED_ITEM,
   );
 
+  $items['assets/run-all-reports'] = array(
+    'title' => 'Assets',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('asset_tool_all_assets'),
+    'access arguments' => array('access content'),
+    'type' => MENU_SUGGESTED_ITEM,
+  );
+
   $items['assets/view-all-reports'] = array(
     'title' => 'Assets',
     'page callback' => 'drupal_get_form',
@@ -112,6 +120,11 @@ function asset_tool_settings_form($form, &$form_state) {
         '#title' => t($asset_type),
         '#collapsible' => TRUE,
         '#collapsed' => FALSE,
+        '#attributes' => array(
+          'class' => array(
+            'asset-type-fieldset',
+          ),
+        ),
       );
 
       $form[$asset_type_id]['asset_type_constants']['target_age'] = array(
@@ -268,6 +281,7 @@ function asset_tool_settings_form($form, &$form_state) {
           '#size' => 6,
           '#title_display' => 'invisible',
           '#default_value' => $asset_type_coefficients_sum,
+          '#disabled' => TRUE,
         ),
       );
 
@@ -289,6 +303,7 @@ function asset_tool_settings_form($form, &$form_state) {
             '#size' => 6,
             '#title_display' => 'invisible',
             '#default_value' => isset($asset_type_coefficients[$cond_id]['period'])? $asset_type_coefficients[$cond_id]['period'] : 0,
+          '#disabled' => TRUE,
           ),
           'ytd' => array(
             '#type' => 'textfield',
@@ -310,6 +325,7 @@ function asset_tool_settings_form($form, &$form_state) {
             '#size' => 6,
             '#title_display' => 'invisible',
             '#default_value' => $asset_type_coefficients_sum,
+            '#disabled' => TRUE,
           ),
         );
 
@@ -326,6 +342,7 @@ function asset_tool_settings_form($form, &$form_state) {
           '#title' => t('Total'),
           '#size' => 6,
           '#title_display' => 'invisible',
+          '#disabled' => TRUE,
         ),
       );
     }
@@ -536,7 +553,7 @@ function asset_tool_all_assets() {
     $row = array(
       l($asset->name, $asset_uri['path']),
       count($asset->data),
-      isset($report['total_score'])? round($report['total_score'], 2) : 'NULL',
+      isset($asset->total_score)? round($asset->total_score, 2) : 'NULL',
       $str,
     );
 

@@ -22,12 +22,91 @@ body.admin-menu {
   }
 }
 
+#page-title {
+  margin-bottom: 10px;
+}
+
 #block-system-main {
   background: transparent;
+
+  > .content {
+    padding: 0;
+  }
 }
 
 tr.even, tr.odd {
   background-color: transparent;
   border-bottom: none;
   padding: 0;
+}
+
+
+@c-section1: #abc123;
+@c-section2: #123abc;
+@c-section3: #fed123;
+@c-section4: #abcfed;
+
+table.report-table {
+  th {
+    text-align: center;
+  }
+
+  td {
+    min-width: 100px;
+    &.null {
+      background-color: @gray-light;
+    }
+  }
+
+  th {
+
+    &.section-1 {
+      background-color: @c-section1;
+      &.period {
+        background-color: lighten(@c-section1, 15%);
+      }
+      &.ytd {
+        background-color: lighten(@c-section1, 25%);
+      }
+      &.ltd {
+        background-color: lighten(@c-section1, 35%);
+      }
+    }
+    &.section-2 {
+      background-color: @c-section2;
+      &.period {
+        background-color: lighten(@c-section2, 15%);
+      }
+      &.ytd {
+        background-color: lighten(@c-section2, 25%);
+      }
+      &.ltd {
+        background-color: lighten(@c-section2, 35%);
+      }
+    }
+    &.section-3 {
+      background-color: @c-section3;
+      &.period {
+        background-color: lighten(@c-section3, 15%);
+      }
+      &.ytd {
+        background-color: lighten(@c-section3, 25%);
+      }
+      &.ltd {
+        background-color: lighten(@c-section3, 35%);
+      }
+    }
+    &.section-4 {
+      background-color: @c-section4;
+      &.period {
+        background-color: lighten(@c-section4, 5%);
+      }
+      &.ytd {
+        background-color: lighten(@c-section4, 14%);
+      }
+      &.ltd {
+        background-color: lighten(@c-section4, 19%);
+      }
+    }
+  }
 }

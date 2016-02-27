@@ -71,3 +71,50 @@ function at_theme_process_page(&$vars) {
 function at_theme_menu_tree__primary(&$variables) {
   return '<ul class="nav-main">' . $variables['tree'] . '</ul>';
 }
+
+function at_theme_menu_local_tasks(&$variables) {
+  $output = '';
+
+  if (!empty($variables['primary'])) {
+    $variables['primary']['#prefix'] = '<h2 class="element-invisible">' . t('Primary tabs') . '</h2>';
+    $variables['primary']['#prefix'] .= '<div class="block"><ul class="nav nav-tabs nav-tabs-alt">';
+    $variables['primary']['#suffix'] = '</ul></div>';
+    $output .= drupal_render($variables['primary']);
+  }
+  if (!empty($variables['secondary'])) {
+    $variables['secondary']['#prefix'] = '<h2 class="element-invisible">' . t('Secondary tabs') . '</h2>';
+    $variables['secondary']['#prefix'] .= '<div class="block"><ul class="tabs secondary">';
+    $variables['secondary']['#suffix'] = '</ul></div>';
+    $output .= drupal_render($variables['secondary']);
+  }
+
+  return $output;
+}
+
+function at_theme_container($variables) {
+
+  $element = $variables['element'];
+  // Ensure #attributes is set.
+  $element += array('#attributes' => array());
+
+  if (isset($element['#block'])) {
+    $element['#attributes']['class'][] = 'block';
+    $str = '<div' . drupal_attributes($element['#attributes']) . '>';
+    $str .= '<div class="block-header bg-primary">' . $element['#title'] . '</div>';
+    $str .= '<div class="block-content">' .  $element['#children'] . '</div></div>';
+
+     return $str;
+  }
+
+  // Special handling for form elements.
+  if (isset($element['#array_parents'])) {
+    // Assign an html ID.
+    if (!isset($element['#attributes']['id'])) {
+      $element['#attributes']['id'] = $element['#id'];
+    }
+    // Add the 'form-wrapper' class.
+    $element['#attributes']['class'][] = 'form-wrapper';
+  }
+
+  return '<div' . drupal_attributes($element['#attributes']) . '>' . $element['#children'] . '</div>';
+}
