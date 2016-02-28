@@ -73,56 +73,37 @@
  */
 ?>
 
-        <!--
-            Available Classes:
-
-            'enable-cookies'             Remembers active color theme between pages (when set through color theme list)
-
-            'sidebar-l'                  Left Sidebar and right Side Overlay
-            'sidebar-r'                  Right Sidebar and left Side Overlay
-            'sidebar-mini'               Mini hoverable Sidebar (> 991px)
-            'sidebar-o'                  Visible Sidebar by default (> 991px)
-            'sidebar-o-xs'               Visible Sidebar by default (< 992px)
-
-            'side-overlay-hover'         Hoverable Side Overlay (> 991px)
-            'side-overlay-o'             Visible Side Overlay by default (> 991px)
-
-            'side-scroll'                Enables custom scrolling on Sidebar and Side Overlay instead of native scrolling (> 991px)
-
-            'header-navbar-fixed'        Enables fixed header
-            'header-navbar-transparent'  Enables a transparent header (if also fixed, it will get a solid dark background color on scrolling)
-        -->
-
     <div id="page-container" class="<?php print $content_classes; ?>">
-        <!-- Side Overlay-->
-        <aside id="side-overlay">
-            <!-- Side Overlay Scroll Container -->
-            <div id="side-overlay-scroll">
-                <!-- Side Header -->
-                <div class="side-header side-content">
-                  <button class="btn btn-default pull-right" type="button" data-toggle="layout" data-action="side_overlay_close">
-                      <i class="fa fa-times"></i>
-                  </button>
-                </div>
-                <!-- END Side Header -->
 
-                <!-- Side Content -->
-                <div class="side-content remove-padding-t">
-                    <!-- Side Overlay Tabs -->
+        <?php if ($page['sidebar_second']): ?>
+          <!-- Side Overlay-->
+          <aside id="side-overlay">
+              <!-- Side Overlay Scroll Container -->
+              <div id="side-overlay-scroll">
+                  <!-- Side Header -->
+                  <div class="side-header side-content">
+                    <button class="btn btn-default pull-right" type="button" data-toggle="layout" data-action="side_overlay_close">
+                        <i class="fa fa-times"></i>
+                    </button>
+                  </div>
+                  <!-- END Side Header -->
 
-                    <?php if ($page['sidebar_second']): ?>
+                  <!-- Side Content -->
+                  <div class="side-content remove-padding-t">
+                      <!-- Side Overlay Tabs -->
+
                       <div id="sidebar-second" class="column sidebar"><div class="section">
                         <?php print render($page['sidebar_second']); ?>
                       </div></div> <!~~ /.section, /#sidebar-second ~~>
-                    <?php endif; ?>
 
-                    <!-- END Side Overlay Tabs -->
-                </div>
-                <!-- END Side Content -->
-            </div>
-            <!-- END Side Overlay Scroll Container -->
-        </aside>
-        <!-- END Side Overlay -->
+                      <!-- END Side Overlay Tabs -->
+                  </div>
+                  <!-- END Side Content -->
+              </div>
+              <!-- END Side Overlay Scroll Container -->
+          </aside>
+          <!-- END Side Overlay -->
+        <?php endif; ?>
 
         <!-- Sidebar -->
         <nav id="sidebar">
@@ -588,13 +569,13 @@
                 <li>
                     <div class="btn-group">
                         <button class="btn btn-default btn-image dropdown-toggle" data-toggle="dropdown" type="button">
-                            <img src="/sites/all/themes/at_theme/img/avatars/avatar10.jpg" alt="Avatar">
+                            <?php print $user_image; ?>
                             <span class="caret"></span>
                         </button>
                         <ul class="dropdown-menu dropdown-menu-right">
                             <li class="dropdown-header">Profile</li>
                             <li>
-                                <a tabindex="-1" href="javascript:void(0)">
+                                <a tabindex="-1" href="<?php print $user_edit_url; ?>">
                                     <i class="si si-settings pull-right"></i>Settings
                                 </a>
                             </li>
@@ -606,14 +587,33 @@
                         </ul>
                     </div>
                 </li>
+                <?php if ($page['sidebar_second']): ?>
                 <li>
                     <!-- Layout API, functionality initialized in App() -> uiLayoutApi() -->
                     <button class="btn btn-default" data-toggle="layout" data-action="side_overlay_toggle" type="button">
                         <i class="fa fa-tasks"></i>
                     </button>
                 </li>
+                <?php endif; ?>
             </ul>
             <!-- END Header Navigation Right -->
+
+<!--
+            <ul class="nav-header pull-left">
+                <li class="hidden-md hidden-lg">
+                    <!~~ Layout API, functionality initialized in App() -> uiLayoutApi() ~~>
+                    <button class="btn btn-default" data-toggle="layout" data-action="sidebar_toggle" type="button">
+                        <i class="fa fa-navicon"></i>
+                    </button>
+                </li>
+                <li class="hidden-xs hidden-sm">
+                    <!~~ Layout API, functionality initialized in App() -> uiLayoutApi() ~~>
+                    <button class="btn btn-default" data-toggle="layout" data-action="sidebar_mini_toggle" type="button">
+                        <i class="fa fa-ellipsis-v"></i>
+                    </button>
+                </li>
+            </ul>
+ -->
         </header>
         <!-- END Header -->
 

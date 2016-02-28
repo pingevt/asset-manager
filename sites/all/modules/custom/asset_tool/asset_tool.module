@@ -3,6 +3,19 @@
 define('ASSET_TOOL_DIR', drupal_get_path('module', 'asset_tool'));
 
 /**
+ * Implements hook_init().
+ */
+function asset_tool_init() {
+  global $user;
+
+  if (!$user->uid && !($_GET['q'] == 'user' || $_GET['q'] == 'user/login' || $_GET['q'] == 'user/password' || $_GET['q'] == 'user/register')) {
+    drupal_set_message("Access Denied: Please Login");
+    drupal_goto('user/login');
+  }
+}
+
+
+/**
  * Implements hook_menu().
  */
 function asset_tool_menu() {
@@ -14,10 +27,18 @@ function asset_tool_menu() {
     'type' => MENU_SUGGESTED_ITEM,
   );
 
+  $items['dashboard'] = array(
+    'title' => 'Dashboard',
+    'page callback' => 'asset_tool_dashboard',
+    'page arguments' => array('asset_tool_all_assets'),
+    'access arguments' => array('access content'),
+    'type' => MENU_SUGGESTED_ITEM,
+  );
+
   $items['assets'] = array(
     'title' => 'Assets',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('asset_tool_all_assets'),
+    'page callback' => 'asset_tool_all_assets',
+    'page arguments' => array(),
     'access arguments' => array('access content'),
     'type' => MENU_SUGGESTED_ITEM,
   );
@@ -47,6 +68,10 @@ function asset_tool_menu() {
   );
 
   return $items;
+}
+
+function asset_tool_dashboard() {
+  return 'Dashboard: Not Implemented Yet';
 }
 
 /**
@@ -543,11 +568,70 @@ function asset_tool_modules_uninstalled($modules) {
 }
 
 function asset_tool_all_assets() {
-  $build = array();
+  drupal_set_title('Assets');
 
-  $build['assets'] = array(
+  $build = array(
+    'toolbar' => array(
+      '#theme' => 'row',
+      '#bob' => 'Joe',
+      'col' => array(
+        '#theme' => 'col',
+        '#attributes' => array(
+          'class' => array('col-sm-12 push-10'),
+        ),
+        'toolbar' => array(
+          '#theme' => 'toolbar',
+          '#attributes' => array(
+            'class' => array('pull-right'),
+          ),
+          'btn_groups_reports' => array(
+            '#theme' => 'btn_group',
+            '#items' => array(
+              l('<i class="fa fa-eraser"></i> Clear Reports', 'assets/clear-all-reports', array('query' => array('destination' => 'assets'), 'html' => TRUE, 'attributes' => array('class' => array('btn', 'btn-sm', 'btn-danger')))),
+              l('<i class="fa fa-line-chart"></i> Run Reports', 'assets/run-all-reports', array('query' => array('destination' => 'assets'), 'html' => TRUE, 'attributes' => array('class' => array('btn', 'btn-sm', 'btn-warning')))),
+            ),
+            '#attributes' => array(
+              'class' => array(),
+            ),
+          ),
+          'btn_groups_add' => array(
+            '#theme' => 'btn_group',
+            '#items' => array(
+              l('<i class="fa fa-plus"></i> Add Asset', '/asset/add', array('html' => TRUE, 'attributes' => array('class' => array('btn', 'btn-sm', 'btn-success')))),
+            ),
+          ),
+        ),
+      ),
+    ),
+    'table' => array(),
+  );
+
+  $headers = array(
+    'aid' => array(
+      'data' => 'Asset',
+      'field' => 'a.name',
+      'sort' => 'DESC',
+    ),
+    'external_id' => array(
+      'data' => 'External ID',
+      'field' => 'a.external_id',
+    ),
+    'n' => array(
+      'data' => '# of Records',
+      'field' => 'count',
+    ),
+    'score' => array(
+      'data' => 'Most Recent Score',
+      'field' => 'a.total_score'
+    ),
+    'actions' => array(
+      'data' => 'Actions',
+    ),
+  );
+
+  $build['assets']['table'] = array(
     '#theme' => 'table',
-    '#header' => array('Asset', 'External ID', '# of Records', 'Most Recent Score', 'Actions'),
+    '#header' => $headers,
     '#rows' => array(),
     '#sticky' => FALSE,
     '#attributes' => array(
@@ -557,27 +641,30 @@ function asset_tool_all_assets() {
     '#suffix' => '</div></div></div>',
   );
 
-  $q = new EntityFieldQuery();
-  $q->entityCondition('entity_type', 'asset');
-  $result = $q->execute();
+  $q = db_select('asset', 'a')
+  ->extend('TableSort');
 
-  $assets = array();
-  if (isset($result['asset'])) {
-    $aids = array_keys($result['asset']);
-    $assets = entity_load('asset', $aids);
-  }
+  $q->fields('a', array('aid'));
+  $q->leftJoin('asset_data', 'ad', 'ad.aid = a.aid');
+  $q->addExpression('COUNT(*)', 'count');
+  $q->groupBy('a.aid');
+
+  $result = $q->orderByHeader($headers)
+  ->execute();
+
+  $asset_ids = $result->fetchCol('aid');
+  $assets= asset_load_multiple($asset_ids);
 
   foreach ($assets as $asset) {
-
     $report = unserialize($asset->report_data);
 
     $asset_uri = asset_uri($asset);
 
     $str = '<div class="btn-group">
         <a href="/'.$asset_uri['path'].'/edit" class="btn btn-xs btn-default" type="button" data-toggle="tooltip" title="" data-original-title="Edit Asset"><i class="fa fa-pencil"></i></a>
-        <a href="/'.$asset_uri['path'].'/run-report?destination=assets/view-all-reports" class="btn btn-xs btn-success" type="button" data-toggle="tooltip" title="" data-original-title="Run Report"><i class="fa fa-line-chart"></i></a>
-        <a href="/'.$asset_uri['path'].'/clear-report?destination=assets/view-all-reports" class="btn btn-xs btn-warning" type="button" data-toggle="tooltip" title="" data-original-title="Clear Report"><i class="fa fa-eraser"></i></a>
-        <a href="/'.$asset_uri['path'].'/delete?destination=assets/view-all-reports" class="btn btn-xs btn-danger" type="button" data-toggle="tooltip" title="" data-original-title="Remove Asset"><i class="fa fa-times"></i></a>
+        <a href="/'.$asset_uri['path'].'/run-report?destination=assets" class="btn btn-xs btn-success" type="button" data-toggle="tooltip" title="" data-original-title="Run Report"><i class="fa fa-line-chart"></i></a>
+        <a href="/'.$asset_uri['path'].'/clear-report?destination=assets" class="btn btn-xs btn-warning" type="button" data-toggle="tooltip" title="" data-original-title="Clear Report"><i class="fa fa-eraser"></i></a>
+        <a href="/'.$asset_uri['path'].'/delete?destination=assets" class="btn btn-xs btn-danger" type="button" data-toggle="tooltip" title="" data-original-title="Remove Asset"><i class="fa fa-times"></i></a>
     </div>';
 
     $row = array(
@@ -588,7 +675,7 @@ function asset_tool_all_assets() {
       $str,
     );
 
-    $build['assets']['#rows'][] = $row;
+    $build['assets']['table']['#rows'][] = $row;
   }
 
   return $build;
@@ -705,5 +792,35 @@ function _at_batch_finished($success, $results, $operations) {
 
 function asset_tool_view_all_reports() {
   drupal_set_title('View All Reports');
-  return 'NOT Implemented yet';
+  $build = array(
+    'table_block' => array(
+      '#theme' => '1block',
+      '#themed' => 'bg-success',
+      '#block_header' => 'Report',
+      '#children' => array(
+        'table' => array(),
+      ),
+    ),
+  );
+
+  $build['table_block']['#children']['table'] = _report_table_base();
+
+  $q = db_select('asset', 'a')
+  ->extend('TableSort');
+
+  $q->fields('a', array('aid'));
+  $q->leftJoin('asset_data', 'ad', 'ad.aid = a.aid');
+  $q->addExpression('COUNT(*)', 'count');
+  $q->groupBy('a.aid');
+
+  $result = $q->execute();
+
+  $asset_ids = $result->fetchCol('aid');
+  $assets= asset_load_multiple($asset_ids);
+
+  foreach ($assets as $asset) {
+    $build['table_block']['#children']['table']['#rows'][] = $asset->reportValuesRow();
+  }
+
+  return $build;
 }

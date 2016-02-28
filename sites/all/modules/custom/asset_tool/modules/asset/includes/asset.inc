@@ -98,6 +98,48 @@ class Asset extends Entity {
     $up = entity_get_controller($this->entityType)->saveReport(array(), $this);
   }
 
+  public function reportValuesRow() {
+    $report_data = array();
+    if (is_string($this->report_data)) {
+      $report_data = unserialize($this->report_data);
+    }
+
+    $values_row = array($this->name);
+
+    foreach ($report_data as $section => $section_data) {
+      if (is_array($section_data)) {
+        foreach ($section_data as $subsection => $subsection_data) {
+          if(is_array($subsection_data)) {
+            foreach ($subsection_data as $key => $value) {
+              if ($value === NULL) {
+                $values_row[] = array(
+                  'data' => $value,
+                  'class' => array('null'),
+                );
+              }
+              else {
+                $values_row[] = array(
+                  'data' => round($value, 2),
+                );
+              }
+            }
+          }
+        }
+      }
+      else {
+        $values_row[] = array(
+          'data' => $value,
+        );
+      }
+    }
+
+    $values_row[] = array(
+      'data' => round($this->total_score, 2),
+    );
+
+    return $values_row;
+  }
+
   public static function getScore($value, $x_min, $x_max, $y_min, $y_max) {
     if ($value > $x_max) {
       return $y_max;
@@ -112,6 +154,7 @@ class Asset extends Entity {
       return $value * $slope + $b;
     }
   }
+
 }
 
 class AssetController extends EntityAPIController {

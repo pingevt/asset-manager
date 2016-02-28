@@ -1,6 +1,19 @@
 <?php
 
 /**
+ * Implements hook_install().
+ */
+function asset_tool_install() {
+  $role1 = new stdClass();
+  $role1->name = 'AT Viewer';
+  user_role_save($role1);
+
+  $role2 = new stdClass();
+  $role2->name = 'AT Admin';
+  user_role_save($role1);
+}
+
+/**
  * Implements hook_uninstall().
  */
 function asset_tool_uninstall() {

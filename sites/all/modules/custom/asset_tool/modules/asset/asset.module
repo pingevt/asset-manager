@@ -223,215 +223,16 @@ function template_process_asset_full(&$vars) {
   }
 
   $num_of_columns_section = count($conditions) + 1;
-  $total_num_of_columns = $num_of_columns_section * 10 + 1;
+  $total_num_of_columns = $num_of_columns_section * 10 + 1 + 1;
 
   if (!empty($report_data)) {
-    $vars['report'] = array(
-      '#theme' => 'table',
-      '#header' => array(array('data' => 'Data', 'colspan' => ($total_num_of_columns))),
-      '#rows' => array(
-        array(
-          array(
-            'data' => 'N-1 Data Archive',
-            'colspan' => $num_of_columns_section * 2,
-            'header' => TRUE,
-            'class' => array(
-              'section-1',
-            ),
-          ),
-          array(
-            'data' => 'N Data',
-            'colspan' => $num_of_columns_section * 2,
-            'header' => TRUE,
-            'class' => array(
-              'section-2',
-            ),
-          ),
-          array(
-            'data' => 'Ranking Metric Values',
-            'colspan' => $num_of_columns_section * 3,
-            'header' => TRUE,
-            'class' => array(
-              'section-3',
-            ),
-          ),
-          array(
-            'data' => 'Ranking Metric Scores',
-            'colspan' => $num_of_columns_section * 3,
-            'header' => TRUE,
-            'class' => array(
-              'section-4',
-            ),
-          ),
-          array(
-            'data' => 'Total',
-            'colspan' => 1,
-            'header' => TRUE
-          )
-        ),
-        array(
-          array(
-            'data' => 'YTD N-1',
-            'colspan' => $num_of_columns_section,
-            'header' => TRUE,
-            'class' => array(
-              'section-1',
-              'ytd',
-            ),
-          ),
-          array(
-            'data' => 'LTD N-1',
-            'colspan' => $num_of_columns_section,
-            'header' => TRUE,
-            'class' => array(
-              'section-1',
-              'ltd',
-            ),
-          ),
-          array(
-            'data' => 'YTD N',
-            'colspan' => $num_of_columns_section,
-            'header' => TRUE,
-            'class' => array(
-              'section-2',
-              'ytd',
-            ),
-          ),
-          array(
-            'data' => 'LTD N',
-            'colspan' => $num_of_columns_section,
-            'header' => TRUE,
-            'class' => array(
-              'section-2',
-              'ltd',
-            ),
-          ),
-          array(
-            'data' => 'This Period',
-            'colspan' => $num_of_columns_section,
-            'header' => TRUE,
-            'class' => array(
-              'section-3',
-              'period',
-            ),
-          ),
-          array(
-            'data' => 'YTD',
-            'colspan' => $num_of_columns_section,
-            'header' => TRUE,
-            'class' => array(
-              'section-3',
-              'ytd',
-            ),
-          ),
-          array(
-            'data' => 'LTD',
-            'colspan' => $num_of_columns_section,
-            'header' => TRUE,
-            'class' => array(
-              'section-3',
-              'ltd',
-            ),
-          ),
-          array(
-            'data' => 'This Period',
-            'colspan' => $num_of_columns_section,
-            'header' => TRUE,
-            'class' => array(
-              'section-4',
-              'period',
-            ),
-          ),
-          array(
-            'data' => 'YTD',
-            'colspan' => $num_of_columns_section,
-            'header' => TRUE,
-            'class' => array(
-              'section-4',
-              'ytd',
-            ),
-          ),
-          array(
-            'data' => 'LTD',
-            'colspan' => $num_of_columns_section,
-            'header' => TRUE,
-            'class' => array(
-              'section-4',
-              'ltd',
-            ),
-          ),
-          array(
-            'data' => '',
-            'colspan' => 1,
-            'header' => FALSE,
-          ),
-        ),
-      ),
-      '#sticky' => FALSE,
-      '#attributes' => array(
-        'class' => array('table', 'table-hover', 'report-table'),
-      ),
-      '#prefix' => '<div class="table-responsive">',
-      '#suffix' => '</div>',
-    );
+    $num_of_columns_section = count($conditions) + 1;
+    $total_num_of_columns = $num_of_columns_section * 10 + 1 + 1;
 
-    $column_headers = array_fill(0, $total_num_of_columns, NULL);
-
-    $column_headers[0] = 'Periods worked in year';
-    $column_headers[$num_of_columns_section] = 'Age in Periods';
-    $column_headers[$num_of_columns_section * 2] = 'Periods worked in year';
-    $column_headers[$num_of_columns_section * 3] = 'Age in Periods';
-    $column_headers[$num_of_columns_section * 4] = '';
-    $column_headers[$num_of_columns_section * 5] = '';
-    $column_headers[$num_of_columns_section * 6] = 'Age LTD';
-    $column_headers[$num_of_columns_section * 7] = '';
-    $column_headers[$num_of_columns_section * 8] = '';
-    $column_headers[$num_of_columns_section * 9] = 'Age';
-    $column_headers[$total_num_of_columns-1] = 'AS';
-
-    $delta = 1;
-    foreach ($conditions as $condition_id => $condition) {
-      $condition['controller']::reportTableHeaderRow($column_headers, $num_of_columns_section, $delta);
-      $delta++;
-    }
-
-    $vars['report']['#rows'][] = $column_headers;
+    $vars['report'] = _report_table_base();
 
     // Add in values
-    $values_row = array();
-
-    foreach ($report_data as $section => $section_data) {
-      if (is_array($section_data)) {
-        foreach ($section_data as $subsection => $subsection_data) {
-          if(is_array($subsection_data)) {
-            foreach ($subsection_data as $key => $value) {
-              if ($value === NULL) {
-                $values_row[] = array(
-                  'data' => $value,
-                  'class' => array('null'),
-                );
-              }
-              else {
-                $values_row[] = array(
-                  'data' => round($value, 2),
-                );
-              }
-            }
-          }
-        }
-      }
-      else {
-        $values_row[] = array(
-          'data' => $value,
-        );
-      }
-    }
-
-    $values_row[] = array(
-      'data' => round($asset->total_score, 2),
-    );
-
-    $vars['report']['#rows'][] = $values_row;
+    $vars['report']['#rows'][] = $asset->reportValuesRow();
   }
   else {
     $vars['report'] = array(
@@ -440,6 +241,188 @@ function template_process_asset_full(&$vars) {
   }
 }
 
+function _report_table_base() {
+
+  $conditions = asset_tool_conditions_load();
+
+  $num_of_columns_section = count($conditions) + 1;
+  $total_num_of_columns = $num_of_columns_section * 10 + 1 + 1;
+
+  $table = array(
+    '#theme' => 'table',
+    '#header' => array(array('data' => 'Data', 'colspan' => ($total_num_of_columns))),
+    '#rows' => array(
+      array(
+        array(),
+        array(
+          'data' => 'N-1 Data Archive',
+          'colspan' => $num_of_columns_section * 2,
+          'header' => TRUE,
+          'class' => array(
+            'section-1',
+          ),
+        ),
+        array(
+          'data' => 'N Data',
+          'colspan' => $num_of_columns_section * 2,
+          'header' => TRUE,
+          'class' => array(
+            'section-2',
+          ),
+        ),
+        array(
+          'data' => 'Ranking Metric Values',
+          'colspan' => $num_of_columns_section * 3,
+          'header' => TRUE,
+          'class' => array(
+            'section-3',
+          ),
+        ),
+        array(
+          'data' => 'Ranking Metric Scores',
+          'colspan' => $num_of_columns_section * 3,
+          'header' => TRUE,
+          'class' => array(
+            'section-4',
+          ),
+        ),
+        array(
+          'data' => 'Total',
+          'colspan' => 1,
+          'header' => TRUE
+        )
+      ),
+      array(
+        array(),
+        array(
+          'data' => 'YTD N-1',
+          'colspan' => $num_of_columns_section,
+          'header' => TRUE,
+          'class' => array(
+            'section-1',
+            'ytd',
+          ),
+        ),
+        array(
+          'data' => 'LTD N-1',
+          'colspan' => $num_of_columns_section,
+          'header' => TRUE,
+          'class' => array(
+            'section-1',
+            'ltd',
+          ),
+        ),
+        array(
+          'data' => 'YTD N',
+          'colspan' => $num_of_columns_section,
+          'header' => TRUE,
+          'class' => array(
+            'section-2',
+            'ytd',
+          ),
+        ),
+        array(
+          'data' => 'LTD N',
+          'colspan' => $num_of_columns_section,
+          'header' => TRUE,
+          'class' => array(
+            'section-2',
+            'ltd',
+          ),
+        ),
+        array(
+          'data' => 'This Period',
+          'colspan' => $num_of_columns_section,
+          'header' => TRUE,
+          'class' => array(
+            'section-3',
+            'period',
+          ),
+        ),
+        array(
+          'data' => 'YTD',
+          'colspan' => $num_of_columns_section,
+          'header' => TRUE,
+          'class' => array(
+            'section-3',
+            'ytd',
+          ),
+        ),
+        array(
+          'data' => 'LTD',
+          'colspan' => $num_of_columns_section,
+          'header' => TRUE,
+          'class' => array(
+            'section-3',
+            'ltd',
+          ),
+        ),
+        array(
+          'data' => 'This Period',
+          'colspan' => $num_of_columns_section,
+          'header' => TRUE,
+          'class' => array(
+            'section-4',
+            'period',
+          ),
+        ),
+        array(
+          'data' => 'YTD',
+          'colspan' => $num_of_columns_section,
+          'header' => TRUE,
+          'class' => array(
+            'section-4',
+            'ytd',
+          ),
+        ),
+        array(
+          'data' => 'LTD',
+          'colspan' => $num_of_columns_section,
+          'header' => TRUE,
+          'class' => array(
+            'section-4',
+            'ltd',
+          ),
+        ),
+        array(
+          'data' => '',
+          'colspan' => 1,
+          'header' => FALSE,
+        ),
+      ),
+    ),
+    '#sticky' => FALSE,
+    '#attributes' => array(
+      'class' => array('table', 'table-hover', 'report-table'),
+    ),
+    '#prefix' => '<div class="table-responsive">',
+    '#suffix' => '</div>',
+  );
+
+  $column_headers = array_fill(0, $total_num_of_columns, NULL);
+
+  $column_headers[0 + 1] = 'Periods worked in year';
+  $column_headers[$num_of_columns_section + 1] = 'Age in Periods';
+  $column_headers[$num_of_columns_section * 2 + 1] = 'Periods worked in year';
+  $column_headers[$num_of_columns_section * 3 + 1] = 'Age in Periods';
+  $column_headers[$num_of_columns_section * 4 + 1] = '';
+  $column_headers[$num_of_columns_section * 5 + 1] = '';
+  $column_headers[$num_of_columns_section * 6 + 1] = 'Age LTD';
+  $column_headers[$num_of_columns_section * 7 + 1] = '';
+  $column_headers[$num_of_columns_section * 8 + 1] = '';
+  $column_headers[$num_of_columns_section * 9 + 1] = 'Age';
+  $column_headers[$total_num_of_columns-1] = 'AS';
+
+  $delta = 2;
+  foreach ($conditions as $condition_id => $condition) {
+    $condition['controller']::reportTableHeaderRow($column_headers, $num_of_columns_section, $delta);
+    $delta++;
+  }
+
+  $table['#rows'][] = $column_headers;
+
+  return $table;
+}
 
 function asset_add_data($form, &$form_state, $asset) {
 
@@ -487,7 +470,6 @@ function asset_add_data_validate($form, &$form_state) {
 }
 
 function asset_add_data_submit($form, &$form_state) {
-dpm($form_state);
   $asset = $form_state['asset'];
 
   $asset->data[] = $form_state['values']['data'];
