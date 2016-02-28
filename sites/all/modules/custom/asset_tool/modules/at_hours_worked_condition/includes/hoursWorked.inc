@@ -75,9 +75,9 @@ class hoursWorked extends assetToolConditionBase {
           ),
         ),
         'equation' => array(
-          '#markup' => 'y = '.$slope.'x + '. $b,
+          '#markup' => '<div class="equation">y = '.$slope.'x + '. $b . '</div>',
         ),
-        '#suffix' => '<div class="ct-chart-' . self::$machine_name . '-' . $asset_type_id . '"></div>
+        '#suffix' => '<div class="ct-chart ct-chart-' . self::$machine_name . '-' . $asset_type_id . '"></div>
       <script>
 var options = {
 axisX: {

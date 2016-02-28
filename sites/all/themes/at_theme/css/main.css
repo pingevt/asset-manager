@@ -11181,3 +11181,146 @@ table.report-table th.section-4.ytd {
 table.report-table th.section-4.ltd {
   background-color: #fbfdfe;
 }
+input[type="submit"] {
+  font-weight: 600;
+  border-radius: 2px;
+  transition: all 0.15s ease-out;
+  color: #fff;
+  background-color: #46c37b;
+  border-color: #34a263;
+}
+input[type="submit"]:active,
+input[type="submit"].active {
+  box-shadow: none;
+}
+input[type="submit"].btn-square {
+  border-radius: 0;
+}
+input[type="submit"].btn-rounded {
+  border-radius: 20px;
+}
+input[type="submit"].btn-minw {
+  min-width: 110px;
+}
+input[type="submit"].btn-noborder {
+  border: none !important;
+}
+input[type="submit"].btn-image {
+  position: relative;
+  padding-left: 40px;
+}
+input[type="submit"].btn-image > img {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  display: block;
+  width: 26px;
+  height: 26px;
+  border-radius: 3px;
+}
+input[type="submit"] > i.pull-left {
+  margin-top: 3px;
+  margin-right: 5px;
+}
+input[type="submit"] > i.pull-right {
+  margin-top: 3px;
+  margin-left: 5px;
+}
+input[type="submit"]:focus,
+input[type="submit"].focus,
+input[type="submit"]:hover {
+  color: #fff;
+  background-color: #37a967;
+  border-color: #257346;
+}
+input[type="submit"]:active,
+input[type="submit"].active,
+.open > .dropdown-toggleinput[type="submit"] {
+  color: #fff;
+  background-color: #2a8350;
+  border-color: #194d2f;
+}
+input[type="submit"]:active:hover,
+input[type="submit"].active:hover,
+.open > .dropdown-toggleinput[type="submit"]:hover,
+input[type="submit"]:active:focus,
+input[type="submit"].active:focus,
+.open > .dropdown-toggleinput[type="submit"]:focus,
+input[type="submit"]:active.focus,
+input[type="submit"].active.focus,
+.open > .dropdown-toggleinput[type="submit"].focus {
+  color: #fff;
+  background-color: #2a8350;
+  border-color: #194d2f;
+}
+input[type="submit"]:active,
+input[type="submit"].active,
+.open > .dropdown-toggleinput[type="submit"] {
+  background-image: none;
+}
+input[type="submit"].disabled,
+input[type="submit"][disabled],
+fieldset[disabled] input[type="submit"],
+input[type="submit"].disabled:hover,
+input[type="submit"][disabled]:hover,
+fieldset[disabled] input[type="submit"]:hover,
+input[type="submit"].disabled:focus,
+input[type="submit"][disabled]:focus,
+fieldset[disabled] input[type="submit"]:focus,
+input[type="submit"].disabled.focus,
+input[type="submit"][disabled].focus,
+fieldset[disabled] input[type="submit"].focus,
+input[type="submit"].disabled:active,
+input[type="submit"][disabled]:active,
+fieldset[disabled] input[type="submit"]:active,
+input[type="submit"].disabled.active,
+input[type="submit"][disabled].active,
+fieldset[disabled] input[type="submit"].active {
+  background-color: #46c37b;
+  border-color: #34a263;
+}
+input[type="submit"] .badge {
+  color: #46c37b;
+  background-color: #fff;
+}
+#asset-tool-settings-form .form-item-app-system-period {
+  margin-bottom: 30px;
+}
+#asset-tool-settings-form fieldset {
+  background: #fff;
+  margin-bottom: 30px;
+}
+#asset-tool-settings-form fieldset legend {
+  background: #5c90d2;
+}
+#asset-tool-settings-form fieldset legend a {
+  color: white;
+}
+#asset-tool-settings-form fieldset .fieldset-wrapper {
+  padding: 20px;
+}
+#asset-tool-settings-form fieldset fieldset {
+  margin: 30px 0;
+  background: #f2f2f2;
+  border: 1px solid #f3f3f3;
+}
+#asset-tool-settings-form fieldset div[id$="-scoring-profile"] > label {
+  display: block;
+}
+#asset-tool-settings-form fieldset div[id$="profile-min"] {
+  float: left;
+  margin-right: 20px;
+}
+#asset-tool-settings-form fieldset div[id$="profile-max"] {
+  float: left;
+  margin-right: 20px;
+}
+#asset-tool-settings-form fieldset .equation {
+  clear: both;
+}
+#asset-tool-settings-form fieldset .ct-chart {
+  clear: both;
+  width: 50%;
+  min-width: 200px;
+  max-width: 400px;
+}

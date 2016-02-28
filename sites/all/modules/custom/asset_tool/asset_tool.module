@@ -7,7 +7,7 @@ define('ASSET_TOOL_DIR', drupal_get_path('module', 'asset_tool'));
  */
 function asset_tool_menu() {
   $items['asset-tool/settings'] = array(
-    'title' => 'Settings',
+    'title' => 'AT Settings',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('asset_tool_settings_form'),
     'access arguments' => array('access content'),
@@ -23,15 +23,15 @@ function asset_tool_menu() {
   );
 
   $items['assets/run-all-reports'] = array(
-    'title' => 'Assets',
+    'title' => 'Run Reports',
     'page callback' => 'drupal_get_form',
-    'page arguments' => array('asset_tool_all_assets'),
+    'page arguments' => array('asset_tool_run_all_reports'),
     'access arguments' => array('access content'),
     'type' => MENU_SUGGESTED_ITEM,
   );
 
   $items['assets/view-all-reports'] = array(
-    'title' => 'Assets',
+    'title' => 'All Reports',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('asset_tool_all_assets'),
     'access arguments' => array('access content'),
@@ -60,11 +60,24 @@ function theme_coefficients_table($vars) {
   $rows = $item['rows'];
   $header = $item['#header'];
 
-  // Setup the structure to be rendered and returned.
   $content = array(
+    'label' => array(
+      '#markup' => '<label>' . $item['#title'] . '</label>',
+    ),
+    'description' => array(
+      '#markup' => isset($item['#description'])? '<div class="description">' . $item['#description'] . '</div>' : '',
+    ),
+    'table' => array(),
+  );
+
+  // Setup the structure to be rendered and returned.
+  $content['table'] = array(
     '#theme' => 'table',
     '#header' => $header,
     '#rows' => array(),
+    '#attributes' => array(
+      'class' => array('table', 'table-bordered'),
+    ),
   );
 
   // Traverse each row.  @see element_chidren().
@@ -76,7 +89,7 @@ function theme_coefficients_table($vars) {
       $row[] = drupal_render($rows[$row_index][$col_index]);
     }
     // Add the row to the table.
-    $content['#rows'][] = $row;
+    $content['table']['#rows'][] = $row;
   }
 
   // Redner the table and return.
@@ -198,9 +211,9 @@ function asset_tool_settings_form($form, &$form_state) {
             ),
           ),
           'equation' => array(
-            '#markup' => 'y = '.$slope.'x + '. $b,
+            '#markup' => '<div class="equation">y = '.$slope.'x + '. $b . '</div>',
           ),
-          '#suffix' => '<div class="ct-chart-age-' . $asset_type_id . '"></div>
+          '#suffix' => '<div class="ct-chart ct-chart-age-' . $asset_type_id . '"></div>
         <script>
   var options = {
   axisX: {
@@ -236,7 +249,8 @@ function asset_tool_settings_form($form, &$form_state) {
 
       $form[$asset_type_id]['coefficients'] = array(
         '#theme' => 'coefficients_table',
-        '#title' => t('Composite score Coefficients'),
+        '#title' => t('Composite Score Coefficients'),
+        '#description' => 'This is the description for the table',
         '#header' => array('', t('Period'), t('YTD'), t('LTD'), t('Total')),
         'rows' => array(),
         '#weight' => 100,
@@ -285,6 +299,8 @@ function asset_tool_settings_form($form, &$form_state) {
         ),
       );
 
+      $total_coefficient_sum = $asset_type_coefficients_sum;
+
       foreach ($conditions as $cond_id => $cond) {
         $form[$asset_type_id][$cond_id] = $cond['controller']::settingsForm($asset_type_id);
 
@@ -303,7 +319,7 @@ function asset_tool_settings_form($form, &$form_state) {
             '#size' => 6,
             '#title_display' => 'invisible',
             '#default_value' => isset($asset_type_coefficients[$cond_id]['period'])? $asset_type_coefficients[$cond_id]['period'] : 0,
-          '#disabled' => TRUE,
+            //'#disabled' => TRUE,
           ),
           'ytd' => array(
             '#type' => 'textfield',
@@ -329,6 +345,8 @@ function asset_tool_settings_form($form, &$form_state) {
           ),
         );
 
+        $total_coefficient_sum += $asset_type_coefficients_sum;
+
         $i++;
       }
 
@@ -340,6 +358,7 @@ function asset_tool_settings_form($form, &$form_state) {
         'total' => array(
           '#type' => 'textfield',
           '#title' => t('Total'),
+          '#default_value' => $total_coefficient_sum,
           '#size' => 6,
           '#title_display' => 'invisible',
           '#disabled' => TRUE,
@@ -370,6 +389,7 @@ function asset_tool_settings_form_validate($form, &$form_state) {
       $cond['controller']::settingsFormValidate($form, $form_state, $asset_type_id);
     }
   }
+
 }
 
 function asset_tool_settings_form_submit($form, &$form_state) {
@@ -561,4 +581,8 @@ function asset_tool_all_assets() {
   }
 
   return $build;
+}
+
+function asset_tool_run_all_reports() {
+
 }

@@ -1,0 +1,53 @@
+#asset-tool-settings-form {
+  .form-item-app-system-period {
+    margin-bottom: 30px;
+  }
+
+  fieldset {
+    background: #fff;
+    margin-bottom: 30px;
+
+    legend {
+      background: @brand-base;
+      a {
+        color: white;
+      }
+    }
+
+    .fieldset-wrapper {
+      padding: 20px;
+    }
+
+    fieldset {
+      margin: 30px 0;
+      background: darken(white, 5%);
+      border: 1px solid @gray-light;
+    }
+
+    div[id$="-scoring-profile"] {
+      & > label {
+        display: block;
+      }
+    }
+
+    div[id$="profile-min"] {
+      float: left;
+      margin-right: 20px;
+    }
+    div[id$="profile-max"] {
+      float: left;
+      margin-right: 20px;
+    }
+
+    .equation {
+      clear: both;
+    }
+
+    .ct-chart {
+      clear: both;
+      width: 50%;
+      min-width: 200px;
+      max-width: 400px;
+    }
+  }
+}
