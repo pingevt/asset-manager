@@ -30,6 +30,14 @@ function asset_tool_menu() {
     'type' => MENU_SUGGESTED_ITEM,
   );
 
+  $items['assets/clear-all-reports'] = array(
+    'title' => 'Clear Reports',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('asset_tool_clear_all_reports'),
+    'access arguments' => array('access content'),
+    'type' => MENU_SUGGESTED_ITEM,
+  );
+
   $items['assets/view-all-reports'] = array(
     'title' => 'All Reports',
     'page callback' => 'drupal_get_form',
@@ -100,6 +108,7 @@ function asset_tool_settings_form($form, &$form_state) {
   drupal_add_css(ASSET_TOOL_DIR . '/chartist/chartist.min.css');
   drupal_add_js(ASSET_TOOL_DIR . '/chartist/chartist.min.js');
 
+  drupal_set_title('AT Settings');
   $form = array('#tree' => TRUE);
 
   // Check if assets exist... cannot change if assets exist.
@@ -538,7 +547,7 @@ function asset_tool_all_assets() {
 
   $build['assets'] = array(
     '#theme' => 'table',
-    '#header' => array('Asset', '# of Records', 'Most Recent Score', 'Actions'),
+    '#header' => array('Asset', 'External ID', '# of Records', 'Most Recent Score', 'Actions'),
     '#rows' => array(),
     '#sticky' => FALSE,
     '#attributes' => array(
@@ -566,14 +575,16 @@ function asset_tool_all_assets() {
 
     $str = '<div class="btn-group">
         <a href="/'.$asset_uri['path'].'/edit" class="btn btn-xs btn-default" type="button" data-toggle="tooltip" title="" data-original-title="Edit Asset"><i class="fa fa-pencil"></i></a>
-        <a href="/'.$asset_uri['path'].'/run-report" class="btn btn-xs btn-default" type="button" data-toggle="tooltip" title="" data-original-title="Run Report"><i class="fa fa-line-chart"></i></a>
-        <a href="/'.$asset_uri['path'].'/delete" class="btn btn-xs btn-danger" type="button" data-toggle="tooltip" title="" data-original-title="Remove Asset"><i class="fa fa-times"></i></a>
+        <a href="/'.$asset_uri['path'].'/run-report?destination=assets/view-all-reports" class="btn btn-xs btn-success" type="button" data-toggle="tooltip" title="" data-original-title="Run Report"><i class="fa fa-line-chart"></i></a>
+        <a href="/'.$asset_uri['path'].'/clear-report?destination=assets/view-all-reports" class="btn btn-xs btn-warning" type="button" data-toggle="tooltip" title="" data-original-title="Clear Report"><i class="fa fa-eraser"></i></a>
+        <a href="/'.$asset_uri['path'].'/delete?destination=assets/view-all-reports" class="btn btn-xs btn-danger" type="button" data-toggle="tooltip" title="" data-original-title="Remove Asset"><i class="fa fa-times"></i></a>
     </div>';
 
     $row = array(
       l($asset->name, $asset_uri['path']),
+      $asset->external_id,
       count($asset->data),
-      isset($asset->total_score)? round($asset->total_score, 2) : 'NULL',
+      isset($asset->total_score)? round($asset->total_score, 2) : '--',
       $str,
     );
 
@@ -584,5 +595,110 @@ function asset_tool_all_assets() {
 }
 
 function asset_tool_run_all_reports() {
+  $batch = array(
+    'operations' => array(
+      array('_at_batch_run_report', array()),
+    ),
+    'finished' => '_at_batch_run_report_finished',
+    'title' => t('Processing Run Reports Batch'),
+    'init_message' => t('Run Reports Batch is starting.'),
+    'progress_message' => t('Processed @current out of @total.'),
+    'error_message' => t('Run Reports Batch has encountered an error.'),
+    //'file' => drupal_get_path('module', 'batch_example') . '/batch_example.inc',
+  );
+  batch_set($batch);
 
+  batch_process('assets/view-all-reports');
+}
+
+function _at_batch_run_report( &$context) {
+
+  if (!isset($context['sandbox']['progress'])) {
+    $context['sandbox']['progress'] = 0;
+    $context['sandbox']['current_asset'] = 0;
+    $context['sandbox']['max'] = db_query('SELECT COUNT(DISTINCT aid) FROM {asset}')->fetchField();
+  }
+  $limit = 1;
+
+  $result = db_query_range("SELECT aid FROM {asset} WHERE aid > ".$context['sandbox']['current_asset']." ORDER BY aid ASC", 0, $limit, array(':current' => $context['sandbox']['current_asset']));
+
+  while ($row = $result->fetchAssoc()) {
+    $asset = asset_load($row['aid']);
+    $asset->runReport();
+
+    $context['sandbox']['progress']++;
+    $context['sandbox']['current_asset'] = $asset->aid;
+    $context['message'] = t('Now processing %asset', array('%asset' => $asset->name));
+  }
+
+  if ($context['sandbox']['progress'] != $context['sandbox']['max']) {
+    $context['finished'] = $context['sandbox']['progress'] / $context['sandbox']['max'];
+  }
+
+  if ($context['finished'] >= 1) {
+    $context['results'][] = t('Ran reports');
+  }
+}
+
+function asset_tool_clear_all_reports() {
+  $batch = array(
+    'operations' => array(
+      array('_at_batch_clear_report', array()),
+    ),
+    'finished' => '_at_batch_run_report_finished',
+    'title' => t('Processing Clear Reports Batch'),
+    'init_message' => t('Clear Reports Batch is starting.'),
+    'progress_message' => t('Processed @current out of @total.'),
+    'error_message' => t('Clear Reports Batch has encountered an error.'),
+    //'file' => drupal_get_path('module', 'batch_example') . '/batch_example.inc',
+  );
+  batch_set($batch);
+
+  batch_process('assets/view-all-reports');
+}
+
+function _at_batch_clear_report( &$context) {
+
+  if (!isset($context['sandbox']['progress'])) {
+    $context['sandbox']['progress'] = 0;
+    $context['sandbox']['current_asset'] = 0;
+    $context['sandbox']['max'] = db_query('SELECT COUNT(DISTINCT aid) FROM {asset}')->fetchField();
+  }
+  $limit = 1;
+
+  $result = db_query_range("SELECT aid FROM {asset} WHERE aid > ".$context['sandbox']['current_asset']." ORDER BY aid ASC", 0, $limit, array(':current' => $context['sandbox']['current_asset']));
+
+  while ($row = $result->fetchAssoc()) {
+    $asset = asset_load($row['aid']);
+    $asset->clearReport();
+
+    $context['sandbox']['progress']++;
+    $context['sandbox']['current_asset'] = $asset->aid;
+    $context['message'] = t('Now processing %asset', array('%asset' => $asset->name));
+  }
+
+  if ($context['sandbox']['progress'] != $context['sandbox']['max']) {
+    $context['finished'] = $context['sandbox']['progress'] / $context['sandbox']['max'];
+  }
+
+  if ($context['finished'] >= 1) {
+    $context['results'][] = t('Cleared reports');
+  }
+}
+
+function _at_batch_finished($success, $results, $operations) {
+  if ($success) {
+    // Here we do something meaningful with the results.
+    $message = t('@count items successfully processed:', array('@count' => count($results)));
+    // $message .= theme('item_list', $results);  // D6 syntax
+    $message .= theme('item_list', array('items' => $results));
+    drupal_set_message($message);
+  }
+  else {
+    // An error occurred.
+    // $operations contains the operations that remained unprocessed.
+    $error_operation = reset($operations);
+    $message = t('An error occurred while processing %error_operation with arguments: @arguments', array('%error_operation' => $error_operation[0], '@arguments' => print_r($error_operation[1], TRUE)));
+    drupal_set_message($message, 'error');
+  }
 }

@@ -85,7 +85,8 @@
       <div class="block block-themed">
         <div class="block-header bg-primary-light">
           <div class="block-options-simple">
-            <a href="/asset/<?php print $asset->aid; ?>/run-report" class="btn btn-sm btn-success" type="submit"><i class="fa fa-calculator"></i> Run Reports</a>
+            <a href="/asset/<?php print $asset->aid; ?>/clear-report" class="btn btn-sm btn-warning" type="submit"><i class="fa fa-eraser"></i> Clear Report</a>
+            <a href="/asset/<?php print $asset->aid; ?>/run-report" class="btn btn-sm btn-success" type="submit"><i class="fa fa-calculator"></i> Run Report</a>
           </div>
           <h3 class="block-title">Reports</h3>
         </div>

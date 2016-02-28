@@ -92,6 +92,12 @@ class Asset extends Entity {
     $up = entity_get_controller($this->entityType)->saveReport($report, $this);
   }
 
+  public function clearReport() {
+    // Clear Report Data
+    $this->total_score = NULL;
+    $up = entity_get_controller($this->entityType)->saveReport(array(), $this);
+  }
+
   public static function getScore($value, $x_min, $x_max, $y_min, $y_max) {
     if ($value > $x_max) {
       return $y_max;

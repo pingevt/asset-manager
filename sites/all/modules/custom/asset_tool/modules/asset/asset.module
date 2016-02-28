@@ -77,6 +77,14 @@ function asset_menu() {
     'access arguments' => array('view', 1),
   );
 
+  $items['asset/%asset/clear-report'] = array(
+    'title' => 'Asset',
+    'page callback' => 'asset_clear_report',
+    'page arguments' => array(1),
+    'access callback' => 'asset_access_menu_callback',
+    'access arguments' => array('view', 1),
+  );
+
   $items['admin/content/asset/bulk/delete/%'] = array(
     'title' => 'Bulk Delete Asset',
     'page callback' => 'drupal_get_form',
@@ -478,6 +486,11 @@ function asset_run_report($asset) {
   drupal_goto('asset/' . $asset->aid);
 }
 
+function asset_clear_report($asset) {
+  $asset->clearReport();
+  drupal_goto('asset/' . $asset->aid);
+}
+
 /**
  * Menu autoloader for /asset.
  */
@@ -516,11 +529,11 @@ function asset_uri($asset) {
  */
 function asset_types_get() {
   return array(
+    'backhoes_excavators' => 'Backhoes/Excavators',
     'bulldozers' => 'Bulldozers',
     /*
     'front_loaders' => 'Front Loaders',
     'dump_trucks' => 'Dump Trucks',
-    'backhoes_excavators' => 'Backhoes/Excavators',
     'cranes' => 'Cranes',
     */
   );
