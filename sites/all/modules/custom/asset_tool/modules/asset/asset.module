@@ -214,6 +214,8 @@ function template_process_asset_full(&$vars) {
     '#suffix' => '</div>',
   );
 
+  $vars['content']['data_form'] = drupal_get_form('asset_add_data', $asset);
+
   // Report
   $report_data = array();
   if (is_string($asset->report_data)) {
@@ -438,6 +440,59 @@ function template_process_asset_full(&$vars) {
   }
 }
 
+
+function asset_add_data($form, &$form_state, $asset) {
+
+  $form = array();
+
+  $form_state['asset'] = $asset;
+
+  $form['aid'] = array(
+    '#type' => 'hidden',
+    '#value' => $asset->aid,
+  );
+
+  $form['data'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('title'),
+    '#tree' => TRUE,
+  );
+
+  $conditions = asset_tool_conditions_load();
+
+  if (isset($asset->data['adid'])) {
+    $form['data'][$i]['adid'] = array(
+      '#type' => 'hidden',
+      '#value' => $asset->data['adid'],
+    );
+  }
+
+  foreach ($conditions as $con_id => $cond) {
+    $form['data'][$con_id] = $cond['controller']::assetFormItems($asset, -1);
+  }
+
+  $form['actions'] = array(
+    '#type' => 'actions',
+    'submit' => array(
+      '#type' => 'submit',
+      '#value' => t('Add Data'),
+    ),
+  );
+
+  return $form;
+}
+
+function asset_add_data_validate($form, &$form_state) {
+
+}
+
+function asset_add_data_submit($form, &$form_state) {
+dpm($form_state);
+  $asset = $form_state['asset'];
+
+  $asset->data[] = $form_state['values']['data'];
+  $asset->save();
+}
 
 /**
  * Helper function for custom queries.

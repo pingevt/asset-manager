@@ -11283,6 +11283,170 @@ input[type="submit"] .badge {
   color: #46c37b;
   background-color: #fff;
 }
+input[value="Remove"] {
+  color: #fff;
+  background-color: #d26a5c;
+  border-color: #c54736;
+}
+input[value="Remove"]:focus,
+input[value="Remove"].focus,
+input[value="Remove"]:hover {
+  color: #fff;
+  background-color: #c94d3c;
+  border-color: #953629;
+}
+input[value="Remove"]:active,
+input[value="Remove"].active,
+.open > .dropdown-toggleinput[value="Remove"] {
+  color: #fff;
+  background-color: #a53c2d;
+  border-color: #6d271e;
+}
+input[value="Remove"]:active:hover,
+input[value="Remove"].active:hover,
+.open > .dropdown-toggleinput[value="Remove"]:hover,
+input[value="Remove"]:active:focus,
+input[value="Remove"].active:focus,
+.open > .dropdown-toggleinput[value="Remove"]:focus,
+input[value="Remove"]:active.focus,
+input[value="Remove"].active.focus,
+.open > .dropdown-toggleinput[value="Remove"].focus {
+  color: #fff;
+  background-color: #a53c2d;
+  border-color: #6d271e;
+}
+input[value="Remove"]:active,
+input[value="Remove"].active,
+.open > .dropdown-toggleinput[value="Remove"] {
+  background-image: none;
+}
+input[value="Remove"].disabled,
+input[value="Remove"][disabled],
+fieldset[disabled] input[value="Remove"],
+input[value="Remove"].disabled:hover,
+input[value="Remove"][disabled]:hover,
+fieldset[disabled] input[value="Remove"]:hover,
+input[value="Remove"].disabled:focus,
+input[value="Remove"][disabled]:focus,
+fieldset[disabled] input[value="Remove"]:focus,
+input[value="Remove"].disabled.focus,
+input[value="Remove"][disabled].focus,
+fieldset[disabled] input[value="Remove"].focus,
+input[value="Remove"].disabled:active,
+input[value="Remove"][disabled]:active,
+fieldset[disabled] input[value="Remove"]:active,
+input[value="Remove"].disabled.active,
+input[value="Remove"][disabled].active,
+fieldset[disabled] input[value="Remove"].active {
+  background-color: #d26a5c;
+  border-color: #c54736;
+}
+input[value="Remove"] .badge {
+  color: #d26a5c;
+  background-color: #fff;
+}
+a.button.remove {
+  font-weight: 600;
+  border-radius: 2px;
+  transition: all 0.15s ease-out;
+  color: #fff;
+  background-color: #d26a5c;
+  border-color: #c54736;
+}
+a.button.remove:active,
+a.button.remove.active {
+  box-shadow: none;
+}
+a.button.remove.btn-square {
+  border-radius: 0;
+}
+a.button.remove.btn-rounded {
+  border-radius: 20px;
+}
+a.button.remove.btn-minw {
+  min-width: 110px;
+}
+a.button.remove.btn-noborder {
+  border: none !important;
+}
+a.button.remove.btn-image {
+  position: relative;
+  padding-left: 40px;
+}
+a.button.remove.btn-image > img {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  display: block;
+  width: 26px;
+  height: 26px;
+  border-radius: 3px;
+}
+a.button.remove > i.pull-left {
+  margin-top: 3px;
+  margin-right: 5px;
+}
+a.button.remove > i.pull-right {
+  margin-top: 3px;
+  margin-left: 5px;
+}
+a.button.remove:focus,
+a.button.remove.focus,
+a.button.remove:hover {
+  color: #fff;
+  background-color: #c94d3c;
+  border-color: #953629;
+}
+a.button.remove:active,
+a.button.remove.active,
+.open > .dropdown-togglea.button.remove {
+  color: #fff;
+  background-color: #a53c2d;
+  border-color: #6d271e;
+}
+a.button.remove:active:hover,
+a.button.remove.active:hover,
+.open > .dropdown-togglea.button.remove:hover,
+a.button.remove:active:focus,
+a.button.remove.active:focus,
+.open > .dropdown-togglea.button.remove:focus,
+a.button.remove:active.focus,
+a.button.remove.active.focus,
+.open > .dropdown-togglea.button.remove.focus {
+  color: #fff;
+  background-color: #a53c2d;
+  border-color: #6d271e;
+}
+a.button.remove:active,
+a.button.remove.active,
+.open > .dropdown-togglea.button.remove {
+  background-image: none;
+}
+a.button.remove.disabled,
+a.button.remove[disabled],
+fieldset[disabled] a.button.remove,
+a.button.remove.disabled:hover,
+a.button.remove[disabled]:hover,
+fieldset[disabled] a.button.remove:hover,
+a.button.remove.disabled:focus,
+a.button.remove[disabled]:focus,
+fieldset[disabled] a.button.remove:focus,
+a.button.remove.disabled.focus,
+a.button.remove[disabled].focus,
+fieldset[disabled] a.button.remove.focus,
+a.button.remove.disabled:active,
+a.button.remove[disabled]:active,
+fieldset[disabled] a.button.remove:active,
+a.button.remove.disabled.active,
+a.button.remove[disabled].active,
+fieldset[disabled] a.button.remove.active {
+  background-color: #d26a5c;
+  border-color: #c54736;
+}
+a.button.remove .badge {
+  color: #d26a5c;
+  background-color: #fff;
+}
 #asset-tool-settings-form .form-item-app-system-period {
   margin-bottom: 30px;
 }

@@ -8,7 +8,6 @@
     <h2<?php print $title_attributes; ?>><a href="<?php print $asset_url; ?>"><?php print $title; ?></a></h2>
   <?php endif; ?>
   <?php print render($title_suffix); ?>
-
   <div class="row">
 
     <div class="col-sm-6">
@@ -73,7 +72,7 @@
             <?php print render($content['data']); ?>
           </div>
           <div id="asset-data-form" class="tab-pane">
-            <?php print render($content['data-form']); ?>
+            <?php print render($content['data_form']); ?>
           </div>
         </div>
       </div>

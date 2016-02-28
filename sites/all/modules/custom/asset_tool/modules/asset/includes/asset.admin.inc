@@ -131,6 +131,9 @@ function asset_form($form, &$form_state, $asset = NULL) {
           '#type' => 'submit',
           '#value' => 'Remove',
           '#submit' => array('asset_form_delete_data'),
+          '#attributes' => array(
+            'class' => array('btn', 'btn-danger'),
+          ),
         );
       }
     }
@@ -140,9 +143,12 @@ function asset_form($form, &$form_state, $asset = NULL) {
       'submit' => array(
         '#type' => 'submit',
         '#value' => isset($asset->aid) ? t('Update Asset') : t('Save Asset'),
+        '#attributes' => array(
+          'class' => array('btn', 'btn-success'),
+        ),
       ),
       'delete_link' => array(
-        '#markup' => isset($asset->aid) ? l(t('Delete'),'admin/content/asset/manage/' . $asset->aid . '/delete', array('attributes' => array('id' => array('asset-delete-' . $asset->aid), 'class' => array('button remove')), 'query' => array('destination' => 'admin/content/assets'))) : '',
+        '#markup' => isset($asset->aid) ? l(t('Delete'),'admin/content/asset/manage/' . $asset->aid . '/delete', array('attributes' => array('id' => array('asset-delete-' . $asset->aid), 'class' => array('button remove btn btn-danger')), 'query' => array('destination' => 'admin/content/assets'))) : '',
       )
     );
   }
@@ -230,3 +236,5 @@ function asset_bulk_delete_submit($form, &$form_state) {
   drupal_set_message(t('assets deleted'));
   drupal_goto('admin/content/asset');
 }
+
+
