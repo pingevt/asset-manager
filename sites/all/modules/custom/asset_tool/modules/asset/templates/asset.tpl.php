@@ -13,20 +13,24 @@
     <div class="col-sm-6">
       <div class="block">
         <div class="block-header bg-primary"></div>
-        <div class="block-content">
-          <div class="form-group">
+        <div class="block-content clearfix">
+          <div class="form-group col-md-4">
             <label>Type:</label>
-            <div><?php print $asset->type; ?></div>
+            <div><?php print $asset->typeDisplay(); ?></div>
           </div>
 
-          <div class="form-group">
+          <div class="form-group col-md-4">
             <label>Starting Year:</label>
             <div><?php print $asset->start_period_year; ?></div>
           </div>
 
-          <div class="form-group">
+          <div class="form-group col-md-4">
             <label>Starting Period:</label>
-            <div><?php print $asset->start_period; ?></div>
+            <div><?php
+              $labels = _get_period_labels();
+              print $labels[variable_get('app_system_period', '')][$asset->start_period];
+
+            ?></div>
           </div>
         </div>
       </div>

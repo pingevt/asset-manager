@@ -155,6 +155,10 @@ class Asset extends Entity {
     }
   }
 
+  public function typeDisplay() {
+    return asset_types_get()[$this->type];
+  }
+
 }
 
 class AssetController extends EntityAPIController {

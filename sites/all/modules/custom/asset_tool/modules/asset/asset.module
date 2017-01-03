@@ -561,6 +561,27 @@ function asset_uri($asset) {
   return array('path' => 'asset/' . $asset->identifier());
 }
 
+function _get_period_labels() {
+  $labels = array(
+    'monthly' => array(),
+    'quarterly' => array(
+      '1' => 'First Q',
+      '2' => 'Second Q',
+      '3' => 'Third Q',
+      '4' => 'First Qourth',
+    ),
+    'biannually' => array(
+      '1' => 'First Half',
+      '2' => 'Second Half',
+    )
+  );
+  for ($i=1;$i<=12;$i++) {
+    $labels['monthly'][$i] = date('M', mktime(0, 0, 0, $i));
+  }
+
+  return $labels;
+}
+
 /**
  *
  */

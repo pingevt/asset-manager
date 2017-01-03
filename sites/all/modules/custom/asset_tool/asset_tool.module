@@ -616,6 +616,10 @@ function asset_tool_all_assets() {
       'data' => 'External ID',
       'field' => 'a.external_id',
     ),
+    'type' => array(
+      'data' => 'Type',
+      'field' => 'a.type',
+    ),
     'n' => array(
       'data' => '# of Records',
       'field' => 'count',
@@ -670,6 +674,7 @@ function asset_tool_all_assets() {
     $row = array(
       l($asset->name, $asset_uri['path']),
       $asset->external_id,
+      $asset->typeDisplay(),
       count($asset->data),
       isset($asset->total_score)? round($asset->total_score, 2) : '--',
       $str,
